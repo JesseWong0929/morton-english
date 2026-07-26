@@ -1,0 +1,1075 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="英语星球">
+<meta name="theme-color" content="#FDF6EC">
+<link rel="apple-touch-icon" href="icon.png">
+<title>Morton 的剑桥英语星球 🚀</title>
+<style>
+:root{
+  --bg:#FDF6EC; --ink:#3A3A55; --ink2:#8A8AA3; --card:#FFFFFF;
+  --coral:#FF7043; --star:#FFC107; --ok:#4CAF7D; --no:#EF5350;
+  --shadow:0 6px 20px rgba(58,58,85,.10); --shadow2:0 10px 30px rgba(58,58,85,.16);
+  --r:24px;
+}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+html{touch-action:manipulation;}
+html,body{height:100%;}
+body{
+  font-family:-apple-system,"PingFang SC","Hiragino Sans GB","Microsoft YaHei",system-ui,sans-serif;
+  background:var(--bg); color:var(--ink); overflow-x:hidden;
+  -webkit-user-select:none;user-select:none;-webkit-touch-callout:none;
+  background-image:radial-gradient(circle at 15% 20%, rgba(255,193,7,.08) 0 120px, transparent 120px),
+    radial-gradient(circle at 85% 10%, rgba(116,171,255,.10) 0 90px, transparent 90px),
+    radial-gradient(circle at 90% 80%, rgba(255,112,67,.07) 0 140px, transparent 140px);
+  min-height:100vh;
+}
+button{font-family:inherit;border:none;cursor:pointer;background:none;color:inherit;}
+.screen{display:none;max-width:960px;margin:0 auto;padding:16px 16px calc(80px + env(safe-area-inset-bottom));}
+.screen.active{display:block;animation:fadeUp .35s ease;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+@keyframes pop{0%{transform:scale(1)}40%{transform:scale(1.25)}100%{transform:scale(1)}}
+@keyframes bounce{0%,100%{transform:translateY(0)}50%{transform:translateY(-18px)}}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-8px)}75%{transform:translateX(8px)}}
+@keyframes wiggle{0%,100%{transform:rotate(-4deg)}50%{transform:rotate(4deg)}}
+@keyframes fall{to{transform:translateY(105vh) rotate(600deg);opacity:.9}}
+.pop{animation:pop .45s ease;} .shake{animation:shake .4s ease;} .bounce{animation:bounce .6s ease;}
+
+/* ---------- top bar ---------- */
+.topbar{position:sticky;top:0;z-index:50;display:flex;align-items:center;gap:10px;
+  padding:calc(12px + env(safe-area-inset-top)) 16px 12px;background:rgba(253,246,236,.92);backdrop-filter:blur(8px);}
+.topbar .back{font-size:26px;width:48px;height:48px;border-radius:16px;background:var(--card);
+  box-shadow:var(--shadow);display:none;align-items:center;justify-content:center;}
+.topbar .back.show{display:flex;}
+.topbar h1{font-size:20px;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.starbox{display:flex;align-items:center;gap:6px;background:var(--card);border-radius:999px;
+  padding:8px 16px;box-shadow:var(--shadow);font-weight:800;font-size:18px;}
+.parent-btn{width:48px;height:48px;border-radius:16px;background:var(--card);box-shadow:var(--shadow);
+  font-size:22px;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;}
+.parent-btn .hold{position:absolute;inset:auto 0 0 0;height:0;background:rgba(255,112,67,.35);transition:none;}
+
+/* ---------- home ---------- */
+.hero{text-align:center;padding:10px 0 18px;}
+.hero .rocket{font-size:56px;display:inline-block;animation:wiggle 3s ease infinite;}
+.hero h2{font-size:26px;margin-top:4px;}
+.hero p{color:var(--ink2);font-size:14px;margin-top:6px;}
+.planets{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:14px;margin-top:8px;}
+.planet{border-radius:var(--r);padding:18px 14px;color:#fff;text-align:center;box-shadow:var(--shadow2);
+  transition:transform .15s ease;position:relative;overflow:hidden;}
+.planet:active{transform:scale(.96);}
+.planet .icon{font-size:52px;display:block;filter:drop-shadow(0 4px 6px rgba(0,0,0,.18));}
+.planet .nm{font-size:18px;font-weight:800;margin-top:8px;}
+.planet .en{font-size:12px;opacity:.9;margin-top:2px;letter-spacing:.5px;}
+.planet .wk{position:absolute;top:10px;left:10px;background:rgba(255,255,255,.28);border-radius:999px;
+  font-size:11px;padding:3px 9px;font-weight:700;}
+.daily-tip{margin-top:18px;background:var(--card);border-radius:var(--r);padding:16px;box-shadow:var(--shadow);
+  display:flex;gap:12px;align-items:center;}
+.daily-tip .big{font-size:34px;}
+.daily-tip b{display:block;font-size:15px;}
+.daily-tip span{font-size:13px;color:var(--ink2);}
+
+/* ---------- planet page ---------- */
+.ptabs{display:flex;gap:8px;margin:4px 0 16px;}
+.ptab{flex:1;padding:12px 6px;border-radius:18px;background:var(--card);box-shadow:var(--shadow);
+  font-size:15px;font-weight:700;color:var(--ink2);text-align:center;}
+.ptab.active{background:var(--ink);color:#fff;}
+.pills{display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap;}
+.pill{padding:9px 16px;border-radius:999px;background:var(--card);box-shadow:var(--shadow);
+  font-size:14px;font-weight:700;color:var(--ink2);}
+.pill.active{background:var(--coral);color:#fff;}
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:12px;}
+.wcard{background:var(--card);border-radius:20px;padding:16px 10px;text-align:center;box-shadow:var(--shadow);
+  transition:transform .12s ease;user-select:none;}
+.wcard:active{transform:scale(.95);}
+.wcard .emo{font-size:56px;line-height:1.1;display:block;}
+.sw{width:56px;height:56px;border-radius:50%;margin:0 auto;border:4px solid #fff;box-shadow:0 2px 8px rgba(0,0,0,.15);}
+.wcard .en{font-size:21px;font-weight:800;margin-top:8px;letter-spacing:.3px;}
+.wcard .cn{font-size:13px;color:var(--ink2);margin-top:2px;min-height:18px;}
+.cn-toggle{margin-left:auto;}
+.hint{font-size:13px;color:var(--ink2);margin:10px 2px 14px;line-height:1.6;}
+
+/* ---------- games ---------- */
+.game-list{display:grid;gap:12px;}
+.game-item{display:flex;align-items:center;gap:14px;background:var(--card);border-radius:var(--r);
+  padding:18px;box-shadow:var(--shadow);text-align:left;}
+.game-item .gi{font-size:40px;}
+.game-item b{font-size:17px;display:block;}
+.game-item span{font-size:13px;color:var(--ink2);}
+.game-item .go{margin-left:auto;font-size:22px;color:var(--coral);}
+.gstage{background:var(--card);border-radius:var(--r);box-shadow:var(--shadow);padding:22px 16px;text-align:center;min-height:340px;}
+.gprog{display:flex;gap:5px;justify-content:center;margin-bottom:14px;}
+.gdot{width:12px;height:12px;border-radius:50%;background:#EDE4D6;}
+.gdot.done{background:var(--star);}
+.gq{font-size:19px;font-weight:800;margin:6px 0 4px;line-height:1.45;}
+.gq .qemo{font-size:64px;display:block;margin-bottom:6px;}
+.gsub{font-size:13px;color:var(--ink2);margin-bottom:14px;}
+.speak-big{font-size:30px;width:74px;height:74px;border-radius:50%;background:var(--coral);color:#fff;
+  box-shadow:var(--shadow2);margin:6px auto 18px;display:flex;align-items:center;justify-content:center;}
+.speak-big:active{transform:scale(.92);}
+.opts{display:grid;grid-template-columns:repeat(auto-fit,minmax(110px,1fr));gap:12px;max-width:520px;margin:0 auto;}
+.opt{background:#FFF9F0;border:3px solid #F1E7D7;border-radius:20px;padding:16px 8px;font-size:17px;font-weight:800;}
+.opt .oemo{font-size:52px;display:block;margin-bottom:4px;}
+.opt.big-txt{font-size:19px;padding:20px 10px;}
+.opt.right{border-color:var(--ok);background:#EAF7EF;}
+.opt.wrong{border-color:var(--no);background:#FDECEC;}
+.bins{display:flex;gap:12px;justify-content:center;margin-top:16px;flex-wrap:wrap;}
+.bin{flex:1;min-width:110px;max-width:170px;border-radius:20px;padding:18px 8px;font-size:16px;font-weight:800;
+  color:#fff;box-shadow:var(--shadow);}
+.bin .bemo{font-size:36px;display:block;margin-bottom:4px;}
+.gdone{padding:30px 10px;}
+.gdone .big{font-size:72px;animation:bounce 1s ease infinite;display:inline-block;}
+.gdone h3{font-size:24px;margin:10px 0 6px;}
+.gdone p{color:var(--ink2);margin-bottom:20px;}
+.btn{display:inline-block;background:var(--coral);color:#fff;font-size:17px;font-weight:800;
+  padding:14px 30px;border-radius:999px;box-shadow:var(--shadow2);}
+.btn.ghost{background:var(--card);color:var(--ink);}
+.btn:active{transform:scale(.95);}
+.fb{min-height:34px;font-size:17px;font-weight:800;margin-top:14px;}
+.fb.good{color:var(--ok);} .fb.bad{color:var(--no);}
+
+/* ---------- sentence factory ---------- */
+.factory-picker{display:grid;gap:10px;margin-bottom:14px;}
+.ft{background:var(--card);border-radius:18px;padding:14px 16px;box-shadow:var(--shadow);text-align:left;
+  font-size:16px;font-weight:700;display:flex;align-items:center;gap:10px;}
+.ft.active{outline:3px solid var(--coral);}
+.ft .fte{font-size:24px;}
+.sline{background:var(--card);border-radius:var(--r);box-shadow:var(--shadow);padding:22px 14px;text-align:center;margin-bottom:14px;}
+.sentence{font-size:24px;font-weight:800;line-height:2;display:flex;flex-wrap:wrap;gap:8px;justify-content:center;align-items:center;min-height:60px;}
+.sentence .fixed{padding:4px 2px;}
+.slot{min-width:96px;min-height:48px;border:3px dashed #E8C9A8;border-radius:14px;background:#FFFBF4;
+  display:inline-flex;align-items:center;justify-content:center;padding:2px 12px;font-size:22px;gap:6px;}
+.slot.filled{border-style:solid;border-color:var(--coral);background:#FFF1E8;animation:pop .35s ease;}
+.slot .se{font-size:30px;}
+.s-actions{display:flex;gap:10px;justify-content:center;margin-top:16px;flex-wrap:wrap;}
+.sfb{margin-top:14px;font-size:18px;font-weight:800;min-height:30px;}
+.sfb .sfe{font-size:40px;display:block;margin-bottom:4px;}
+.tray{background:var(--card);border-radius:var(--r);box-shadow:var(--shadow);padding:14px;}
+.tray h4{font-size:13px;color:var(--ink2);margin:4px 0 10px;font-weight:700;}
+.chips{display:flex;flex-wrap:wrap;gap:9px;margin-bottom:8px;}
+.chip{background:#FFF9F0;border:2px solid #F1E7D7;border-radius:14px;padding:9px 13px;font-size:16px;
+  font-weight:800;display:flex;align-items:center;gap:6px;}
+.chip:active{transform:scale(.93);}
+.chip .ce{font-size:24px;}
+.chip.color-chip .csw{width:20px;height:20px;border-radius:50%;border:2px solid #fff;box-shadow:0 1px 4px rgba(0,0,0,.2);}
+.answer-row{display:flex;gap:12px;justify-content:center;margin-top:14px;flex-wrap:wrap;}
+
+/* ---------- parent ---------- */
+.parent-wrap{max-width:960px;margin:0 auto;}
+.ptabs2{display:flex;gap:8px;overflow-x:auto;padding-bottom:6px;margin-bottom:14px;}
+.ptab2{white-space:nowrap;padding:10px 16px;border-radius:999px;background:var(--card);box-shadow:var(--shadow);
+  font-size:14px;font-weight:700;color:var(--ink2);}
+.ptab2.active{background:var(--ink);color:#fff;}
+.psec{display:none;background:var(--card);border-radius:var(--r);box-shadow:var(--shadow);padding:22px;line-height:1.75;font-size:14.5px;}
+.psec.active{display:block;animation:fadeUp .3s ease;}
+.psec h3{font-size:18px;margin:18px 0 8px;color:var(--coral);}
+.psec h3:first-child{margin-top:0;}
+.psec,.psec *{-webkit-user-select:text;user-select:text;}
+.psec p{margin:6px 0;}
+.psec ul,.psec ol{margin:6px 0 10px 20px;}
+.psec li{margin:4px 0;}
+.psec table{width:100%;border-collapse:collapse;margin:10px 0;font-size:13.5px;}
+.psec th{background:#FFF3E6;text-align:left;}
+.psec th,.psec td{border:1px solid #F0E4D2;padding:8px 10px;vertical-align:top;}
+.psec .tag{display:inline-block;background:#FFF3E6;color:var(--coral);border-radius:6px;padding:1px 7px;font-size:12px;font-weight:700;margin-right:4px;}
+.prompt-box{background:#FAF6EF;border:1px solid #EFE5D3;border-radius:14px;padding:14px;margin:10px 0;position:relative;}
+.prompt-box pre{white-space:pre-wrap;font-family:inherit;font-size:13px;line-height:1.7;color:#4A4A66;}
+.copy-btn{position:absolute;top:10px;right:10px;background:var(--ink);color:#fff;border-radius:10px;
+  padding:6px 12px;font-size:12px;font-weight:700;}
+.note{background:#FFF9E8;border-left:4px solid var(--star);border-radius:10px;padding:10px 14px;margin:10px 0;font-size:13.5px;}
+.lvl{display:inline-block;border-radius:6px;padding:1px 8px;font-size:12px;font-weight:800;color:#fff;margin-right:2px;}
+.l1{background:#B0BEC5;} .l2{background:#64B5F6;} .l3{background:#FFB74D;} .l4{background:#4CAF7D;}
+
+.tts-warn{display:none;background:#FDECEC;color:#B33;border-radius:12px;padding:10px 14px;font-size:13px;margin:0 16px 10px;max-width:928px;}
+.confetti{position:fixed;top:-20px;font-size:22px;z-index:999;pointer-events:none;animation:fall linear forwards;}
+@media (max-width:480px){
+  .cards{grid-template-columns:repeat(auto-fill,minmax(104px,1fr));}
+  .wcard .emo{font-size:44px;} .wcard .en{font-size:17px;}
+  .sentence{font-size:20px;}
+  .planet .icon{font-size:44px;}
+}
+</style>
+</head>
+<body>
+<div class="topbar">
+  <button class="back" id="backBtn" onclick="goBack()">←</button>
+  <h1 id="barTitle">🚀 Morton 的英语星球</h1>
+  <div class="starbox">⭐ <span id="starCount">0</span></div>
+  <button class="parent-btn" id="parentBtn" title="家长长按进入">👨‍👩‍👦<div class="hold" id="holdBar"></div></button>
+</div>
+<div class="tts-warn" id="ttsWarn">🔇 当前窗口不支持语音朗读。建议把本文件保存到电脑后，用浏览器（Safari / Chrome）双击打开，即可点读发音。</div>
+
+<!-- ============ HOME ============ -->
+<div class="screen active" id="scr-home">
+  <div class="hero">
+    <span class="rocket">🚀</span>
+    <h2>Morton 的剑桥英语星球</h2>
+    <p>每天 15 分钟，点一个星球开始今天的探险吧！</p>
+  </div>
+  <div class="planets" id="planetGrid"></div>
+  <div class="daily-tip">
+    <div class="big">⏱️</div>
+    <div><b>今日探险路线（15 分钟）</b>
+    <span>数一数热身 2′ → 单词卡 5′ → 小游戏 4′ → 句子工厂 4′</span></div>
+  </div>
+  <div class="daily-tip">
+    <div class="big">🔢</div>
+    <div style="flex:1"><b>数字热身 · Warm up!</b>
+    <span>按顺序点数字，大声跟着说</span>
+    <div class="chips" style="margin-top:8px" id="numRow"></div></div>
+  </div>
+</div>
+
+<!-- ============ PLANET ============ -->
+<div class="screen" id="scr-planet">
+  <div class="ptabs">
+    <button class="ptab active" data-pt="words" onclick="switchPTab('words')">📇 单词</button>
+    <button class="ptab" data-pt="games" onclick="switchPTab('games')">🎮 游戏</button>
+    <button class="ptab" data-pt="factory" onclick="switchPTab('factory')">🏗️ 句子工厂</button>
+  </div>
+  <div id="pt-words">
+    <div class="pills" id="lvlPills"></div>
+    <p class="hint" id="wordHint">👆 点卡片听发音，跟着大声说；再点一次可以再听。</p>
+    <div class="cards" id="wordGrid"></div>
+  </div>
+  <div id="pt-games" style="display:none">
+    <div class="game-list" id="gameList"></div>
+    <div class="gstage" id="gameStage" style="display:none;margin-top:12px"></div>
+  </div>
+  <div id="pt-factory" style="display:none">
+    <p class="hint">🏗️ 把词语积木拼成句子，点 ▶ 听整句，再自己大声说一遍！</p>
+    <div class="factory-picker" id="ftPicker"></div>
+    <div class="sline">
+      <div class="sentence" id="sentenceLine"></div>
+      <div class="sfb" id="sFeedback"></div>
+      <div class="s-actions">
+        <button class="btn" onclick="playSentence()">▶ 听整句</button>
+        <button class="btn ghost" onclick="resetSentence()">🔄 换一换</button>
+      </div>
+      <div class="answer-row" id="answerRow"></div>
+    </div>
+    <div class="tray" id="chipTray"></div>
+  </div>
+</div>
+
+<!-- ============ PARENT ============ -->
+<div class="screen" id="scr-parent">
+<div class="parent-wrap">
+  <div class="ptabs2">
+    <button class="ptab2 active" data-ps="plan" onclick="switchPSec('plan')">📅 本月规划</button>
+    <button class="ptab2" data-ps="daily" onclick="switchPSec('daily')">⏱️ 每日流程</button>
+    <button class="ptab2" data-ps="gpt" onclick="switchPSec('gpt')">🎙️ GPT Live 指令</button>
+    <button class="ptab2" data-ps="audio" onclick="switchPSec('audio')">🎧 磨耳朵</button>
+    <button class="ptab2" data-ps="eval" onclick="switchPSec('eval')">📊 进度评估</button>
+    <button class="ptab2" data-ps="tips" onclick="switchPSec('tips')">💡 引导技巧</button>
+  </div>
+
+  <div class="psec active" id="ps-plan">
+    <h3>8 月总目标：从「会跟读」走向「提示下能自己说」</h3>
+    <p>Morton 已经有不错的语感和模仿力，痛点是<b>单词是散的、句子靠提示</b>。所以这个月不追求词汇量，而是把剑少一级里他最有基础的 4 个主题<b>学透</b>，让每个词都能「串」进 2–3 个句型里说出来。</p>
+    <table>
+      <tr><th>周次</th><th>主题星球</th><th>核心词</th><th>核心句型</th><th>周末达标</th></tr>
+      <tr><td><b>第1周</b><br>7.28–8.3</td><td>🦁 动物星球<br><span class="tag">已有基础</span></td><td>基础8 + 进阶8<br>（挑战词随兴趣）</td><td>It is a/an…<br>A frog can jump.<br>Can a fish fly? — No, it can't.</td><td>能在图片提示下说出 6 个动物的「It is a… / It can…」</td></tr>
+      <tr><td><b>第2周</b><br>8.4–8.10</td><td>🍎 美食星球<br><span class="tag">已有基础</span></td><td>基础8 + 进阶8</td><td>I like… / I don't like…<br>Is it food? 分类</td><td>能独立说 4 句真实喜好「I like… / I don't like…」；动物vs食物分类不混</td></tr>
+      <tr><td><b>第3周</b><br>8.11–8.17</td><td>🖐️ 身体星球<br><span class="tag">全新·词少易学</span></td><td>13 个身体词</td><td>This is my…<br>I have two…<br>Touch your…（听指令做动作）</td><td>听懂并做对 8 个「Touch your…」指令；说出 3 句 This is my…</td></tr>
+      <tr><td><b>第4周</b><br>8.18–8.24</td><td>🧸 玩具星球<br><span class="tag">兴趣主题</span></td><td>基础8 + 进阶8</td><td>I have a…<br>This is my… It is (red).<br>三句连说</td><td>拿着真实玩具连说三句：This is my car. It is blue. I like it!</td></tr>
+      <tr><td><b>第5周</b><br>8.25–8.31</td><td>🏫 开学准备 + 总复习</td><td>10 个课堂词 + 6 个课堂指令</td><td>Stand up. Sit down. Open your book.<br>混合复习四大主题</td><td>听懂 6 个课堂指令并做动作；完成「三句小达人」挑战</td></tr>
+    </table>
+    <p>🌈 <b>彩虹星球（颜色+数字）不占独立周</b>：颜色和 1–10 作为每天 2 分钟热身，并在第 3、4 周「串」进句子（My hair is black. / It is a red car.）。</p>
+    <div class="note">📌 <b>取舍说明</b>：剑少一级共 15 个主题约 450 词，这个月只精学其中 4 个（约 60 个核心词）+ 开学衔接词。其余主题用<b>音频磨耳朵</b>先混脸熟，9 月起再逐个展开。对 6 岁孩子，「60 个词能开口造句」远比「450 个词都见过」有价值。</div>
+    <div class="note">⚖️ <b>内容配比</b>：每天 60–70% 是旧内容换花样复习，20–30% 新词（每天最多 3 个），10% 自由玩。若某周未达标，下周新词量减半（8→4），主题顺延——<b>进度服从掌握</b>。</div>
+  </div>
+
+  <div class="psec" id="ps-daily">
+    <h3>每天 15 分钟怎么用（工具内闭环）</h3>
+    <table>
+      <tr><th>时间</th><th>环节</th><th>做法</th></tr>
+      <tr><td>2′</td><td>🔢 热身</td><td>首页点数字 1–10 大声数 + 彩虹星球点 2–3 个颜色说 It is red.</td></tr>
+      <tr><td>5′</td><td>📇 单词卡</td><td>当周星球：复习 3 个昨天的词 + 新学 3 个（点卡听音→跟读→遮住中文再认）。周四五起用「挑战」组</td></tr>
+      <tr><td>4′</td><td>🎮 小游戏</td><td>每天换一个：听音找词 / 快问快答 / 分类。答对时让他把整句大声说出来</td></tr>
+      <tr><td>4′</td><td>🏗️ 句子工厂</td><td>拼 2–3 句，听完整句后<b>自己复述</b>。这是把单词「串起来」的关键环节，不能省</td></tr>
+    </table>
+    <h3>每周节奏</h3>
+    <ul>
+      <li><b>周一到周五</b>：上面的 15 分钟流程，每天新词 ≤3 个</li>
+      <li><b>每周 2–3 次</b>：用 GPT Live 做 10 分钟口语对话（见「GPT Live 指令」页），替换当天的游戏环节即可，总时长不增加</li>
+      <li><b>周六</b>：复习日——不学新词，只玩游戏 + 句子工厂混合复习</li>
+      <li><b>周日</b>：休息或只听音频，保护兴趣</li>
+    </ul>
+    <h3>碎片时间（不算在 15 分钟内）</h3>
+    <ul>
+      <li>🎧 早餐 / 路上播当周主题音频 1–2 遍（文件夹里的 mp3，见「磨耳朵」页）</li>
+      <li>🏠 生活里随手指认：吃饭时 "Do you like eggs?"，下楼时 "Can you jump?"</li>
+    </ul>
+    <div class="note">🎯 判断每天是否有效的唯一标准：<b>今天 Morton 有没有自己说出至少 2 个完整句</b>（哪怕是你起了句首）。有，就够了。</div>
+  </div>
+
+  <div class="psec" id="ps-gpt">
+    <h3>GPT Live 每周对话指令</h3>
+    <p>每周把对应指令<b>整段复制</b>发给 GPT，再开始语音对话。指令已按 Morton 的学情写好规则（慢语速、提示阶梯、纠错方式），并和本工具当周内容同步。每次 10 分钟左右，每周 2–3 次。</p>
+    <div id="gptBoxes"></div>
+    <div class="note">💡 用法提示：对话时让 Morton 戴耳机或外放都可以，但<b>家长在旁边</b>，当他卡住时用手势提示他看你口型，不要替他回答。结束后 GPT 会用中文告诉你他今天的表现，可以记到「进度评估」里。</div>
+  </div>
+
+  <div class="psec" id="ps-audio">
+    <h3>磨耳朵：文件夹音频使用表</h3>
+    <p>你放在 <b>2026.08/剑少一级单词表【朗读音频】</b> 里的 mp3 按下表轮播。磨耳朵是「泛听」，不要求跟读、不要求坐好，吃饭玩耍时当背景即可。</p>
+    <table>
+      <tr><th>周次</th><th>主打音频（每天1–2遍）</th><th>穿插音频</th></tr>
+      <tr><td>第1周</td><td>Animals.mp3</td><td>Colour.mp3</td></tr>
+      <tr><td>第2周</td><td>Food &amp; Drink.mp3</td><td>Animals.mp3（复习）</td></tr>
+      <tr><td>第3周</td><td>The body &amp; the face.mp3</td><td>Colour.mp3</td></tr>
+      <tr><td>第4周</td><td>Toys.mp3</td><td>Food &amp; Drink.mp3（复习）</td></tr>
+      <tr><td>第5周</td><td>School.mp3</td><td>本月四个主题轮播</td></tr>
+    </table>
+    <ul>
+      <li>周四、周五起玩「听到就拍手」：播音频时约定一个词（如 frog），听到就拍手——把泛听变成小游戏</li>
+      <li>其余主题（Clothes、Transport、The home…）9 月以后再主打，现在偶尔当背景音即可，混个耳熟不布置任务</li>
+    </ul>
+  </div>
+
+  <div class="psec" id="ps-eval">
+    <h3>四层掌握标准（不要只看会不会跟读）</h3>
+    <p>每个词/句型按四层判断：
+      <span class="lvl l1">1 能跟读</span>
+      <span class="lvl l2">2 能识别</span>（听到能指出/选对）
+      <span class="lvl l3">3 提示下能说</span>（给图片或句首能说出）
+      <span class="lvl l4">4 能独立用</span>（新情境主动说）
+    </p>
+    <p>到第 <b>3</b> 层才算「开始掌握」。工具里的游戏练第 2 层，句子工厂和 GPT 对话练第 3→4 层。</p>
+    <h3>每周日 3 分钟快检（家长口头做）</h3>
+    <ol>
+      <li>随机指 6 张当周单词卡（遮中文）：他能说出几个？→ 记录</li>
+      <li>问 3 个当周句型问题（如 Can a fish fly? / Do you like milk?）：几个能完整句回答？</li>
+      <li>让他用当周的词自己说 2 句：需要句首提示吗？</li>
+    </ol>
+    <table>
+      <tr><th>结果</th><th>下周动作</th></tr>
+      <tr><td>6 词里 ≥4 个到第3层，句型能答 2/3</td><td>✅ 按计划进入下一主题</td></tr>
+      <tr><td>6 词里 2–3 个到第3层</td><td>⚠️ 进入下一主题，但新词减半，每天多 2 分钟复习旧主题</td></tr>
+      <tr><td>大部分词还停在跟读层</td><td>⏸️ 本主题再学一周，换游戏形式不换内容（顺延不叫落后）</td></tr>
+    </table>
+    <div class="note">📒 建议准备一张纸质打卡表贴冰箱上：每天完成 15 分钟贴一颗星，周日快检结果写一行。6 岁孩子对<b>实体贴纸</b>的激励远强于任何 App。攒满 20 颗星给一个小奖励（他选的玩具/绘本）。</div>
+    <h3>需要持续记录的观察点</h3>
+    <ul>
+      <li>哪些句型还总混：can/can't？I/it？a/an？（工具的快问快答和句子工厂会自然暴露）</li>
+      <li>发音难点：th（thin/three）、词尾辅音——出现时不打断，事后用单词卡多点几遍</li>
+      <li>他对哪类游戏最有反应——下个月的设计跟着兴趣走</li>
+    </ul>
+  </div>
+
+  <div class="psec" id="ps-tips">
+    <h3>他卡住时的「提示九阶梯」（一层层来，别跳）</h3>
+    <ol>
+      <li>等 5 秒，微笑看着他</li>
+      <li>原句再问一遍</li>
+      <li>放慢、拆短再问</li>
+      <li>配动作 / 指图</li>
+      <li>给两个选项："Cat or dog?"</li>
+      <li>给句首："It is a…"</li>
+      <li>分段示范让他接：A frog → can → jump</li>
+      <li>一句简短中文点破关键词</li>
+      <li>马上回到英语，让他完整说一遍</li>
+    </ol>
+    <h3>纠错 = 正确复述，不说"错了"</h3>
+    <p>他说 "No, it can." → 你说 "Good try! <b>No, it can't.</b> Say it with me~"。他只说 "Frog." → 先肯定 "Yes! A frog!" 再补 "Say: It is a frog."</p>
+    <h3>只说一个词时，帮他「补成整句」而不是要求重来</h3>
+    <p>目标是让「完整句」成为习惯，但压力不能大：他每天能在你的句首提示下说出 2–3 个完整句，就是达标。</p>
+    <h3>走神 ≠ 不想学</h3>
+    <p>沉默或说「不明白」，多数是没听懂 / 不知道用哪个句型 / 连续跟读太久。先换形式（改成游戏、让他当小老师、你故意说错让他抓），不要提前结束。15 分钟结束时停在他<b>还想玩</b>的时候最好。</p>
+    <h3>本工具怎么配合你</h3>
+    <ul>
+      <li>单词卡：他点你跟着夸；让他当小老师「教你」，你偶尔读错让他纠正</li>
+      <li>快问快答：答完屏幕会念完整句——固定动作是「跟着屏幕再说一遍」</li>
+      <li>句子工厂：拼傻句子（Can a cake swim?）大笑没关系，笑着说 "No! A cake can't swim!" 就是最好的 can't 教学</li>
+    </ul>
+  </div>
+</div>
+</div>
+<script>
+/* ================= DATA ================= */
+const VERBS={
+  jump:{e:'🤸',cn:'跳'}, run:{e:'🏃',cn:'跑'}, swim:{e:'🏊',cn:'游泳'},
+  fly:{e:'🦅',cn:'飞'}, walk:{e:'🚶',cn:'走'}, sing:{e:'🎤',cn:'唱歌'}
+};
+const ANIMALS=[
+ {w:'cat',e:'🐱',cn:'猫',lv:1,can:['run','jump','walk']},
+ {w:'dog',e:'🐶',cn:'狗',lv:1,can:['run','jump','walk','swim']},
+ {w:'fish',e:'🐟',cn:'鱼',lv:1,can:['swim']},
+ {w:'bird',e:'🐦',cn:'鸟',lv:1,can:['fly','sing','walk']},
+ {w:'frog',e:'🐸',cn:'青蛙',lv:1,can:['jump','swim']},
+ {w:'lion',e:'🦁',cn:'狮子',lv:1,can:['run','walk']},
+ {w:'chicken',e:'🐔',cn:'小鸡',lv:1,can:['walk','run']},
+ {w:'duck',e:'🦆',cn:'鸭子',lv:1,can:['swim','walk','fly']},
+ {w:'elephant',e:'🐘',cn:'大象',lv:2,can:['walk']},
+ {w:'monkey',e:'🐵',cn:'猴子',lv:2,can:['jump','run','walk']},
+ {w:'tiger',e:'🐯',cn:'老虎',lv:2,can:['run','swim','walk','jump']},
+ {w:'bear',e:'🐻',cn:'熊',lv:2,can:['walk','run','swim']},
+ {w:'sheep',e:'🐑',cn:'绵羊',lv:2,can:['walk','run']},
+ {w:'cow',e:'🐮',cn:'奶牛',lv:2,can:['walk']},
+ {w:'horse',e:'🐴',cn:'马',lv:2,can:['run','jump','walk']},
+ {w:'mouse',e:'🐭',cn:'老鼠',lv:2,can:['run','jump','walk']},
+ {w:'snake',e:'🐍',cn:'蛇',lv:3,can:['swim']},
+ {w:'spider',e:'🕷️',cn:'蜘蛛',lv:3,can:['walk','jump']},
+ {w:'bee',e:'🐝',cn:'蜜蜂',lv:3,can:['fly']},
+ {w:'giraffe',e:'🦒',cn:'长颈鹿',lv:3,can:['walk','run']},
+ {w:'zebra',e:'🦓',cn:'斑马',lv:3,can:['run','walk']},
+ {w:'hippo',e:'🦛',cn:'河马',lv:3,can:['swim','walk']},
+ {w:'crocodile',e:'🐊',cn:'鳄鱼',lv:3,can:['swim','walk']},
+ {w:'polar bear',e:'🐻‍❄️',cn:'北极熊',lv:3,can:['swim','walk','run']}
+];
+const FOODS=[
+ {w:'bread',e:'🍞',cn:'面包',lv:1},{w:'burger',e:'🍔',cn:'汉堡包',lv:1},
+ {w:'apple',e:'🍎',cn:'苹果',lv:1},{w:'banana',e:'🍌',cn:'香蕉',lv:1},
+ {w:'milk',e:'🥛',cn:'牛奶',lv:1},{w:'water',e:'💧',cn:'水',lv:1},
+ {w:'egg',e:'🥚',cn:'鸡蛋',lv:1},{w:'juice',e:'🧃',cn:'果汁',lv:1},
+ {w:'rice',e:'🍚',cn:'米饭',lv:2},{w:'cake',e:'🍰',cn:'蛋糕',lv:2},
+ {w:'ice cream',e:'🍦',cn:'冰淇淋',lv:2},{w:'orange',e:'🍊',cn:'橙子',lv:2},
+ {w:'fish',e:'🐟',cn:'鱼（食物）',lv:2},{w:'chicken',e:'🍗',cn:'鸡肉',lv:2},
+ {w:'grape',e:'🍇',cn:'葡萄',lv:2},{w:'pear',e:'🍐',cn:'梨',lv:2},
+ {w:'watermelon',e:'🍉',cn:'西瓜',lv:3},{w:'pineapple',e:'🍍',cn:'菠萝',lv:3},
+ {w:'mango',e:'🥭',cn:'芒果',lv:3},{w:'tomato',e:'🍅',cn:'番茄',lv:3},
+ {w:'potato',e:'🥔',cn:'土豆',lv:3},{w:'carrot',e:'🥕',cn:'胡萝卜',lv:3},
+ {w:'chocolate',e:'🍫',cn:'巧克力',lv:3},{w:'chips',e:'🍟',cn:'薯条',lv:3}
+];
+const BODY=[
+ {w:'eye',e:'👀',cn:'眼睛',lv:1,pl:'eyes'},{w:'ear',e:'👂',cn:'耳朵',lv:1,pl:'ears'},
+ {w:'nose',e:'👃',cn:'鼻子',lv:1},{w:'mouth',e:'👄',cn:'嘴巴',lv:1},
+ {w:'face',e:'😊',cn:'脸',lv:1},{w:'hand',e:'✋',cn:'手',lv:1,pl:'hands'},
+ {w:'head',e:'🧑',cn:'头',lv:2},{w:'hair',e:'💇',cn:'头发',lv:2},
+ {w:'arm',e:'💪',cn:'手臂',lv:2,pl:'arms'},{w:'leg',e:'🦵',cn:'腿',lv:2,pl:'legs'},
+ {w:'foot',e:'🦶',cn:'脚',lv:2,pl:'feet'},{w:'body',e:'🧍',cn:'身体',lv:2},
+ {w:'smile',e:'😄',cn:'微笑',lv:2}
+];
+const TOYS=[
+ {w:'ball',e:'🏐',cn:'球',lv:1},{w:'car',e:'🚗',cn:'小汽车',lv:1},
+ {w:'train',e:'🚂',cn:'火车',lv:1},{w:'plane',e:'✈️',cn:'飞机',lv:1},
+ {w:'boat',e:'⛵',cn:'小船',lv:1},{w:'bike',e:'🚲',cn:'自行车',lv:1},
+ {w:'balloon',e:'🎈',cn:'气球',lv:1},{w:'teddy bear',e:'🧸',cn:'泰迪熊',lv:1},
+ {w:'kite',e:'🪁',cn:'风筝',lv:2},{w:'robot',e:'🤖',cn:'机器人',lv:2},
+ {w:'doll',e:'🪆',cn:'玩偶',lv:2},{w:'football',e:'⚽',cn:'足球',lv:2},
+ {w:'basketball',e:'🏀',cn:'篮球',lv:2},{w:'truck',e:'🚚',cn:'卡车',lv:2},
+ {w:'helicopter',e:'🚁',cn:'直升机',lv:2},{w:'game',e:'🎲',cn:'游戏',lv:2},
+ {w:'monster',e:'👾',cn:'怪兽',lv:3},{w:'alien',e:'👽',cn:'外星人',lv:3}
+];
+const COLORS=[
+ {w:'red',cn:'红色',hex:'#E53935'},{w:'blue',cn:'蓝色',hex:'#1E88E5'},
+ {w:'yellow',cn:'黄色',hex:'#FDD835'},{w:'green',cn:'绿色',hex:'#43A047'},
+ {w:'orange',cn:'橙色',hex:'#FB8C00'},{w:'purple',cn:'紫色',hex:'#8E24AA'},
+ {w:'pink',cn:'粉色',hex:'#F06292'},{w:'black',cn:'黑色',hex:'#212121'},
+ {w:'white',cn:'白色',hex:'#FAFAFA'},{w:'brown',cn:'棕色',hex:'#795548'},
+ {w:'grey',cn:'灰色',hex:'#9E9E9E'}
+].map(c=>({...c,lv:1}));
+const SCHOOL=[
+ {w:'school',e:'🏫',cn:'学校',lv:1},{w:'teacher',e:'🧑‍🏫',cn:'老师',lv:1},
+ {w:'book',e:'📖',cn:'书',lv:1},{w:'pen',e:'🖊️',cn:'钢笔',lv:1},
+ {w:'pencil',e:'✏️',cn:'铅笔',lv:1},{w:'bag',e:'🎒',cn:'书包',lv:1},
+ {w:'chair',e:'🪑',cn:'椅子',lv:2},{w:'ruler',e:'📏',cn:'尺子',lv:2},
+ {w:'crayons',e:'🖍️',cn:'蜡笔',lv:2},{w:'classroom',e:'🏫',cn:'教室',lv:2}
+];
+const SCHOOL_ACTIONS=[
+ {w:'Stand up!',e:'🧍',cn:'起立'},{w:'Sit down!',e:'🪑',cn:'坐下'},
+ {w:'Listen!',e:'👂',cn:'听'},{w:'Look!',e:'👀',cn:'看'},
+ {w:'Open your book!',e:'📖',cn:'打开书'},{w:'Close your book!',e:'📕',cn:'合上书'}
+];
+const SILLY=[{w:'cake',e:'🍰',cn:'蛋糕'},{w:'burger',e:'🍔',cn:'汉堡包'},{w:'banana',e:'🍌',cn:'香蕉'},{w:'ice cream',e:'🍦',cn:'冰淇淋'}];
+
+const PLANETS=[
+ {id:'animals',nm:'动物星球',en:'Animals',icon:'🦁',wk:'第1周',
+  grad:'linear-gradient(135deg,#A8E063,#56AB2F)',words:ANIMALS,
+  games:['listen','yesno'],
+  templates:[
+    {id:'a1',label:'It is a … 🐱',parts:[{t:'fix',v:'It is'},{t:'art'},{t:'slot',k:'animal'},{t:'fix',v:'.'}]},
+    {id:'a2',label:'A … can … 🤸',parts:[{t:'art',cap:true},{t:'slot',k:'animal'},{t:'fix',v:'can'},{t:'slot',k:'verb'},{t:'fix',v:'.'}],judge:true},
+    {id:'a3',label:'Can a … …? ❓',parts:[{t:'fix',v:'Can'},{t:'art'},{t:'slot',k:'animal'},{t:'slot',k:'verb'},{t:'fix',v:'?'}],question:true}
+  ]},
+ {id:'food',nm:'美食星球',en:'Food & Drink',icon:'🍎',wk:'第2周',
+  grad:'linear-gradient(135deg,#FFA751,#FF5E62)',words:FOODS,
+  games:['listen','sort'],
+  templates:[
+    {id:'f1',label:'I like … 😋',parts:[{t:'fix',v:'I like'},{t:'slot',k:'food'},{t:'fix',v:'.'}]},
+    {id:'f2',label:"I don't like … 🙅",parts:[{t:'fix',v:"I don't like"},{t:'slot',k:'food'},{t:'fix',v:'.'}]},
+    {id:'f3',label:'I like … and … 🤝',parts:[{t:'fix',v:'I like'},{t:'slot',k:'food'},{t:'fix',v:'and'},{t:'slot',k:'food'},{t:'fix',v:'.'}]}
+  ]},
+ {id:'body',nm:'身体星球',en:'The Body & Face',icon:'🖐️',wk:'第3周',
+  grad:'linear-gradient(135deg,#FFC3A0,#FF7E9D)',words:BODY,
+  games:['listen','tpr'],
+  templates:[
+    {id:'b1',label:'This is my … 👃',parts:[{t:'fix',v:'This is my'},{t:'slot',k:'body'},{t:'fix',v:'.'}]},
+    {id:'b2',label:'I have two … ✌️',parts:[{t:'fix',v:'I have two'},{t:'slot',k:'bodypl'},{t:'fix',v:'.'}]},
+    {id:'b3',label:'My hair is … 🌈',parts:[{t:'fix',v:'My hair is'},{t:'slot',k:'color'},{t:'fix',v:'.'}]}
+  ]},
+ {id:'toys',nm:'玩具星球',en:'Toys',icon:'🧸',wk:'第4周',
+  grad:'linear-gradient(135deg,#89F7FE,#66A6FF)',words:TOYS,
+  games:['listen','sort3'],
+  templates:[
+    {id:'t1',label:'I have a … 🧸',parts:[{t:'fix',v:'I have'},{t:'art'},{t:'slot',k:'toy'},{t:'fix',v:'.'}]},
+    {id:'t2',label:'It is a (red) car 🎨',parts:[{t:'fix',v:'It is'},{t:'art2'},{t:'slot',k:'color'},{t:'slot',k:'toy'},{t:'fix',v:'.'}]},
+    {id:'t3',label:'⭐ 三句小达人',three:true,parts:[{t:'fix',v:'This is my'},{t:'slot',k:'toy'},{t:'fix',v:'. It is'},{t:'slot',k:'color'},{t:'fix',v:'. I like it!'}]}
+  ]},
+ {id:'colors',nm:'彩虹星球',en:'Colours · 每日热身',icon:'🌈',wk:'每天',
+  grad:'linear-gradient(135deg,#F6D365,#FDA085)',words:COLORS,
+  games:['listen'],
+  templates:[
+    {id:'c1',label:'It is … 🔴',parts:[{t:'fix',v:'It is'},{t:'slot',k:'color'},{t:'fix',v:'.'}]},
+    {id:'c2',label:'a red apple 🍎',parts:[{t:'art2'},{t:'slot',k:'color'},{t:'slot',k:'thing'},{t:'fix',v:''}]}
+  ]},
+ {id:'school',nm:'开学准备',en:'School · 第5周',icon:'🏫',wk:'第5周',
+  grad:'linear-gradient(135deg,#C299FC,#764BA2)',words:SCHOOL,
+  games:['listen','classroom'],
+  templates:[
+    {id:'s1',label:'This is my … 🎒',parts:[{t:'fix',v:'This is my'},{t:'slot',k:'school'},{t:'fix',v:'.'}]},
+    {id:'s2',label:'I can see a … 👀',parts:[{t:'fix',v:'I can see'},{t:'art'},{t:'slot',k:'school'},{t:'fix',v:'.'}]}
+  ]}
+];
+
+const GAME_META={
+ listen:{gi:'👂',nm:'听音找词',sub:'听一听，点出正确的图'},
+ yesno:{gi:'🙋',nm:'快问快答',sub:'Can a fish fly? 用完整句回答！'},
+ sort:{gi:'🗂️',nm:'动物 or 食物',sub:'分一分：它是动物还是食物？'},
+ sort3:{gi:'🗂️',nm:'大分类挑战',sub:'动物、食物还是玩具？'},
+ tpr:{gi:'🫵',nm:'听指令摸一摸',sub:'Touch your nose! 边点边摸自己'},
+ classroom:{gi:'🏫',nm:'课堂小指令',sub:'Stand up! Sit down! 听懂就做动作'}
+};
+
+const GPT_PROMPTS=[
+{wk:'第1周 · 动物 (7.28–8.3)',txt:`你是6岁中国男孩 Morton 的英语口语老师 Coco，温柔又爱笑。现在进行约10分钟的口语游戏。
+必须遵守的规则：
+1. 全程以英语为主，语速很慢，每句不超过6个单词；一次只问一个问题，问完安静等他答，不要连着说。
+2. 他答不出时按顺序帮助：原句重复→放慢拆短→给两个选项（"Cat or dog?"）→给句首（"It is a..."）；仍不懂才用一句简短中文点拨，然后马上回到英语。
+3. 他只答一个词或只说 Yes/No 时：先表扬，再示范完整句请他跟说一遍。例：他说"Yes."，你说"Great! Say: Yes, it can."
+4. 不说 wrong / 不对；用正确句子自然复述代替纠错。多叫他的名字，具体表扬（"I love how you said swim!"）。
+本周内容：动物 cat, dog, fish, bird, frog, lion, duck, elephant, monkey, tiger, bear, horse；动作 jump, run, swim, fly, walk, sing；句型 It is a... / A frog can jump. / Can a fish swim? Yes, it can. / No, it can't.
+活动流程（每个约2-3分钟）：
+① 热身：问 Can you jump? Can you swim? 请他边做动作边回答。
+② 猜动物：你描述"It is big. It can run. What is it?"让他猜；猜对后请他说完整句 It is a lion.
+③ 小老师时间：请 Morton 提问你 Can a ___ ___?，你认真回答，偶尔故意答错让他纠正你。
+④ 傻问题快答：Can a fish fly? Can a cake swim? Can an elephant jump? 要求完整句回答。
+结束时：用英语热情表扬；然后用中文告诉家长：他今天独立说出了哪些完整句、哪些词还需要句首提示。`},
+{wk:'第2周 · 美食 (8.4–8.10)',txt:`你是6岁中国男孩 Morton 的英语口语老师 Coco，温柔又爱笑。现在进行约10分钟的口语游戏。
+必须遵守的规则：（同前）語速很慢、每句≤6词、一次一个问题并等待；提示阶梯：重复→放慢→两个选项→给句首→一句中文后立刻回英语；他只答单词时先表扬再示范完整句请他跟说；不说"错"，用正确句复述；具体表扬。
+本周内容：食物 bread, burger, apple, banana, milk, water, egg, juice, rice, cake, ice cream, orange, grape, chicken；句型 I like... / I don't like... / Do you like...? Yes, I do. / No, I don't. 复习：It is a... / Is it food?
+活动流程：
+① 热身：Do you like apples? Do you like milk? 请他用 Yes, I do. / No, I don't. 回答。
+② 我的餐盘：请他说3样喜欢的："I like ___." 你夸张回应自己的喜好让他听（I like ice cream!）。
+③ 小老师时间：他问你 Do you like ___?，你回答，偶尔说傻话（I like spiders!）让他大笑并纠正 Spiders are not food!（可简化为 No! Not food!）
+④ 分类快答：Is an apple food? Is a cat food? 引导完整句 Yes, it is. / No, it isn't.（这是新句型，多示范多包容）
+结束时：英语表扬 + 中文向家长小结：独立说出的句子、需提示的地方、like/don't like 是否分得清。`},
+{wk:'第3周 · 身体 (8.11–8.17)',txt:`你是6岁中国男孩 Morton 的英语口语老师 Coco，温柔又爱笑。现在进行约10分钟的口语游戏。
+必须遵守的规则：（同前）慢语速、短句、一次一问并等待；提示阶梯：重复→放慢→两个选项→句首→一句中文后回英语；只答单词先表扬再补完整句；用复述纠错；具体表扬。
+本周内容：身体 eye(s), ear(s), nose, mouth, face, hair, head, hand(s), arm(s), leg(s), foot/feet, smile；颜色词复习；句型 This is my... / I have two... / Touch your...
+活动流程：
+① 听指令做动作：Touch your nose! Touch your ears! 由慢到快，做对就欢呼。
+② 数一数：How many eyes? 引导 I have two eyes. （注意示范 feet：I have two feet.）
+③ 小老师时间：Morton 指挥你 Touch your ___!，你做动作，偶尔故意摸错让他纠正。
+④ 画像描述：请他说自己："This is my nose. My hair is black. I have two hands." 你先示范说你自己。
+结束时：英语表扬 + 中文向家长小结：能听懂哪些指令、能独立说出哪些句子。`},
+{wk:'第4周 · 玩具 (8.18–8.24)',txt:`你是6岁中国男孩 Morton 的英语口语老师 Coco，温柔又爱笑。现在进行约10分钟的口语游戏。
+必须遵守的规则：（同前）慢语速、短句、一次一问并等待；提示阶梯；先表扬再补完整句；复述纠错；具体表扬。
+本周内容：玩具 ball, car, train, plane, boat, bike, balloon, teddy bear, kite, robot, doll, football；颜色；句型 I have a... / This is my... / It is (blue). / 目标挑战：连说三句 This is my car. It is red. I like it!
+活动流程：
+① 热身：What toys do you have? 引导 I have a ___. 说3个。
+② 拿玩具来！请家长让 Morton 拿一个真实玩具，对着它说：This is my ___. It is ___. I like it!（本周核心，耐心用句首提示帮他连成三句）
+③ 猜玩具：你描述 It is red. It can fly. What is it?（kite/plane/balloon）让他猜。
+④ 小老师时间：他描述一个玩具让你猜；他说不出时给句首 It is...
+结束时：英语表扬 + 中文向家长小结：三句连说完成度如何、哪一句还需要提示。`},
+{wk:'第5周 · 开学准备+总复习 (8.25–8.31)',txt:`你是6岁中国男孩 Morton 的英语口语老师 Coco，温柔又爱笑。他9月1日就要上小学一年级了！现在进行约10分钟的口语游戏。
+必须遵守的规则：（同前）慢语速、短句、一次一问并等待；提示阶梯；先表扬再补完整句；复述纠错；具体表扬。
+本周内容：课堂词 school, teacher, book, pen, pencil, bag, chair, ruler；课堂指令 Stand up. Sit down. Listen. Look. Open your book. Close your book.；混合复习：动物/食物/身体/玩具四个主题的核心句型。
+活动流程：
+① 模拟课堂：你当老师发指令 Stand up! Open your book!（请家长配合准备一本书），做对就表扬。
+② 书包里有什么：I have a pencil. This is my bag. 让他说3样文具。
+③ 大复习抽查（游戏化）：混合问 Can a frog jump? / Do you like rice? / Touch your head! / What is it?(描述猜物)，答对积分。
+④ 毕业小舞台：请他连说三句介绍任何东西（玩具/动物/自己），你当观众鼓掌。
+结束时：热情祝贺他准备好上学了！中文向家长总结：这个月他从哪些方面进步了、开学后建议继续的1-2个练习。`}
+];
+
+/* ================= CORE ================= */
+let stars=0, curPlanet=null, showCN=true, curLvl=1;
+const $=id=>document.getElementById(id);
+
+/* ---- TTS ---- */
+let voiceEN=null;
+function pickVoice(){
+  try{
+    const vs=speechSynthesis.getVoices();
+    voiceEN=vs.find(v=>/en[-_]US/i.test(v.lang)&&/samantha|google us/i.test(v.name.toLowerCase()))
+      ||vs.find(v=>/en[-_]US/i.test(v.lang))||vs.find(v=>/^en/i.test(v.lang))||null;
+  }catch(e){}
+}
+if('speechSynthesis' in window){
+  pickVoice(); speechSynthesis.onvoiceschanged=pickVoice;
+  setTimeout(()=>{try{if(speechSynthesis.getVoices().length===0)$('ttsWarn').style.display='block';}catch(e){}},2500);
+}else{ $('ttsWarn').style.display='block'; }
+/* iOS/iPad: audio & speech must be unlocked by the first touch */
+function unlockAudio(){
+  try{AC=AC||new (window.AudioContext||window.webkitAudioContext)();if(AC.state==='suspended')AC.resume();}catch(e){}
+  try{if('speechSynthesis' in window){const u=new SpeechSynthesisUtterance(' ');u.volume=0;u.rate=2;speechSynthesis.speak(u);pickVoice();}}catch(e){}
+}
+document.addEventListener('pointerdown',unlockAudio,{once:true,capture:true});
+document.addEventListener('touchstart',unlockAudio,{once:true,capture:true});
+function speak(text,rate,queue){
+  if(!('speechSynthesis' in window))return;
+  try{
+    if(!queue)speechSynthesis.cancel();
+    const u=new SpeechSynthesisUtterance(text);
+    if(voiceEN)u.voice=voiceEN;
+    u.lang='en-US'; u.rate=rate||0.78; u.pitch=1.06;
+    speechSynthesis.speak(u);
+  }catch(e){}
+}
+
+/* ---- sounds ---- */
+let AC=null;
+function tone(f,t,dur,type){
+  try{
+    AC=AC||new (window.AudioContext||window.webkitAudioContext)();
+    const o=AC.createOscillator(),g=AC.createGain();
+    o.type=type||'sine';o.frequency.value=f;o.connect(g);g.connect(AC.destination);
+    g.gain.setValueAtTime(.18,AC.currentTime+t);
+    g.gain.exponentialRampToValueAtTime(.001,AC.currentTime+t+dur);
+    o.start(AC.currentTime+t);o.stop(AC.currentTime+t+dur);
+  }catch(e){}
+}
+const ding=()=>{tone(880,0,.15);tone(1318,.12,.22);};
+const boop=()=>tone(200,0,.25,'triangle');
+
+/* ---- stars & confetti ---- */
+function addStar(n){
+  stars+=(n||1);
+  const el=$('starCount');el.textContent=stars;
+  el.parentElement.classList.remove('pop');void el.parentElement.offsetWidth;el.parentElement.classList.add('pop');
+  if(stars%5===0){confetti();speak('Great job, Morton!',0.9,true);}
+}
+function confetti(){
+  const emos=['🎉','⭐','🎊','✨','🌟','💛'];
+  for(let i=0;i<34;i++){
+    const s=document.createElement('span');s.className='confetti';
+    s.textContent=emos[Math.floor(Math.random()*emos.length)];
+    s.style.left=Math.random()*100+'vw';
+    s.style.animationDuration=(1.6+Math.random()*1.6)+'s';
+    s.style.animationDelay=(Math.random()*.4)+'s';
+    document.body.appendChild(s);setTimeout(()=>s.remove(),3400);
+  }
+}
+
+/* ---- helpers ---- */
+const shuffle=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;};
+const pick=a=>a[Math.floor(Math.random()*a.length)];
+const artOf=w=>/^[aeiou]/i.test(w)?'an':'a';
+const cap=s=>s.charAt(0).toUpperCase()+s.slice(1);
+
+/* ---- navigation ---- */
+function showScreen(id){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  $(id).classList.add('active');
+  $('backBtn').classList.toggle('show',id!=='scr-home');
+  window.scrollTo(0,0);
+}
+function goBack(){ showScreen('scr-home'); $('barTitle').textContent='🚀 Morton 的英语星球'; }
+
+/* parent hold-to-enter */
+(function(){
+  const btn=$('parentBtn'),bar=$('holdBar');let t0=null,raf=null;
+  function start(e){e.preventDefault();t0=performance.now();
+    (function step(){const p=Math.min(1,(performance.now()-t0)/1200);
+      bar.style.height=(p*100)+'%';
+      if(p>=1){cancel();showScreen('scr-parent');$('barTitle').textContent='👨‍👩‍👦 家长中心';return;}
+      raf=requestAnimationFrame(step);})();}
+  function cancel(){if(raf)cancelAnimationFrame(raf);raf=null;t0=null;bar.style.height='0';}
+  btn.addEventListener('mousedown',start);btn.addEventListener('touchstart',start,{passive:false});
+  ['mouseup','mouseleave','touchend','touchcancel'].forEach(ev=>btn.addEventListener(ev,cancel));
+})();
+
+/* ---- home ---- */
+function renderHome(){
+  $('planetGrid').innerHTML=PLANETS.map(p=>`
+    <button class="planet" style="background:${p.grad}" onclick="openPlanet('${p.id}')">
+      <span class="wk">${p.wk}</span>
+      <span class="icon">${p.icon}</span>
+      <div class="nm">${p.nm}</div><div class="en">${p.en}</div>
+    </button>`).join('');
+  const nums=['one','two','three','four','five','six','seven','eight','nine','ten'];
+  const tapped=new Set();
+  $('numRow').innerHTML=nums.map((n,i)=>`<button class="chip" id="num${i}" onclick="tapNum(${i},'${n}')"><b style="font-size:19px">${i+1}</b> ${n}</button>`).join('');
+  window.tapNum=(i,n)=>{speak(n,0.85);const c=$('num'+i);c.classList.add('pop');setTimeout(()=>c.classList.remove('pop'),450);
+    tapped.add(i);if(tapped.size===10){tapped.clear();addStar();ding();}};
+}
+
+/* ---- planet ---- */
+function openPlanet(id){
+  curPlanet=PLANETS.find(p=>p.id===id);
+  $('barTitle').textContent=curPlanet.icon+' '+curPlanet.nm;
+  showScreen('scr-planet');
+  switchPTab('words'); curLvl=1; renderLvlPills(); renderWords();
+  renderGameList(); renderFactory();
+}
+function switchPTab(t){
+  document.querySelectorAll('.ptab').forEach(b=>b.classList.toggle('active',b.dataset.pt===t));
+  $('pt-words').style.display=t==='words'?'':'none';
+  $('pt-games').style.display=t==='games'?'':'none';
+  $('pt-factory').style.display=t==='factory'?'':'none';
+  $('gameStage').style.display='none';$('gameList').style.display='grid';
+}
+function renderLvlPills(){
+  const lvs=[...new Set(curPlanet.words.map(w=>w.lv))].sort();
+  const names={1:'🌱 基础',2:'🚀 进阶',3:'🏆 挑战'};
+  let html=lvs.map(l=>`<button class="pill ${l===curLvl?'active':''}" onclick="setLvl(${l})">${names[l]}</button>`).join('');
+  html+=`<button class="pill cn-toggle ${showCN?'active':''}" onclick="toggleCN()">中文 ${showCN?'开':'关'}</button>`;
+  $('lvlPills').innerHTML=html;
+}
+window.setLvl=l=>{curLvl=l;renderLvlPills();renderWords();};
+window.toggleCN=()=>{showCN=!showCN;renderLvlPills();renderWords();};
+function renderWords(){
+  const ws=curPlanet.words.filter(w=>w.lv===curLvl);
+  $('wordGrid').innerHTML=ws.map((w,i)=>`
+    <button class="wcard" onclick="tapWord('${curPlanet.id}',${curLvl},${i},this)">
+      ${w.hex?`<div class="sw" style="background:${w.hex}"></div>`:`<span class="emo">${w.e}</span>`}
+      <div class="en">${w.w}</div>
+      <div class="cn">${showCN?w.cn:'　'}</div>
+    </button>`).join('');
+}
+window.tapWord=(pid,lv,i,el)=>{
+  const w=PLANETS.find(p=>p.id===pid).words.filter(x=>x.lv===lv)[i];
+  speak(w.w,0.75);
+  el.classList.remove('pop');void el.offsetWidth;el.classList.add('pop');
+};
+
+/* ================= GAMES ================= */
+let G=null;
+function renderGameList(){
+  $('gameList').innerHTML=curPlanet.games.map(g=>{
+    const m=GAME_META[g];
+    return `<button class="game-item" onclick="startGame('${g}')">
+      <span class="gi">${m.gi}</span><div><b>${m.nm}</b><span>${m.sub}</span></div>
+      <span class="go">▶</span></button>`;}).join('');
+}
+window.startGame=(type)=>{
+  const roundsMap={listen:8,yesno:6,sort:10,sort3:10,tpr:8,classroom:6};
+  G={type,rounds:roundsMap[type],i:0,got:0,lock:false};
+  $('gameList').style.display='none';
+  const st=$('gameStage');st.style.display='block';
+  nextRound();
+};
+function gameDots(){
+  return `<div class="gprog">${Array.from({length:G.rounds},(_,k)=>`<span class="gdot ${k<G.i?'done':''}"></span>`).join('')}</div>`;
+}
+function nextRound(){
+  if(G.i>=G.rounds)return gameDone();
+  G.lock=false;
+  const fn={listen:roundListen,yesno:roundYesno,sort:roundSort,sort3:roundSort3,tpr:roundTpr,classroom:roundClassroom}[G.type];
+  fn();
+}
+function gameDone(){
+  confetti();ding();speak('Well done, Morton!',0.9);
+  $('gameStage').innerHTML=`<div class="gdone">
+    <span class="big">🏆</span>
+    <h3>太棒了！</h3><p>本轮拿到 ⭐×${G.got}</p>
+    <button class="btn" onclick="startGame('${G.type}')">再玩一次</button>
+    <button class="btn ghost" onclick="switchPTab('games')">返回</button>
+  </div>`;
+}
+function optEmoji(it){return it.hex?`<div class="sw" style="background:${it.hex};margin:0 auto 4px"></div>`:`<span class="oemo">${it.e}</span>`;}
+
+function roundListen(){
+  const pool=curPlanet.words.filter(w=>w.lv<=2);
+  const target=pick(pool);
+  const opts=shuffle([target,...shuffle(pool.filter(w=>w.w!==target.w)).slice(0,2)]);
+  G.answer=target.w;
+  $('gameStage').innerHTML=gameDots()+`
+    <div class="gq">听一听，它是谁？</div>
+    <div class="gsub">点 🔊 可以再听一遍</div>
+    <button class="speak-big" onclick="speak('${target.w.replace(/'/g,"\\'")}',0.72)">🔊</button>
+    <div class="opts">${opts.map(o=>`
+      <button class="opt" data-w="${o.w}" onclick="ansListen(this)">${optEmoji(o)}${o.w}</button>`).join('')}
+    </div><div class="fb" id="gfb"></div>`;
+  setTimeout(()=>speak(target.w,0.72),350);
+}
+window.ansListen=(el)=>{
+  if(G.lock)return;
+  if(el.dataset.w===G.answer){
+    G.lock=true;el.classList.add('right');ding();addStar();G.got++;
+    $('gfb').className='fb good';$('gfb').textContent='✅ '+cap(G.answer)+'! 跟着说一遍！';
+    speak(G.answer,0.78,true);
+    G.i++;setTimeout(nextRound,1100);
+  }else{
+    el.classList.add('wrong');el.classList.add('shake');boop();
+    setTimeout(()=>el.classList.remove('shake'),450);
+    speak(G.answer,0.7);
+  }
+};
+
+function roundYesno(){
+  const useSilly=Math.random()<0.3;
+  const subj=useSilly?pick(SILLY):pick(ANIMALS.filter(a=>a.lv<=2));
+  const verb=pick(Object.keys(VERBS));
+  const ok=subj.can?subj.can.includes(verb):false;
+  G.answer=ok?'yes':'no';
+  const q=`Can ${artOf(subj.w)} ${subj.w} ${verb}?`;
+  G.qFull=q; G.ansFull=ok?'Yes, it can.':"No, it can't.";
+  $('gameStage').innerHTML=gameDots()+`
+    <div class="gq"><span class="qemo">${subj.e} ${VERBS[verb].e}</span>${q}</div>
+    <div class="gsub">用完整句回答哦</div>
+    <button class="speak-big" onclick="speak('${q.replace(/'/g,"\\'")}',0.75)">🔊</button>
+    <div class="opts">
+      <button class="opt big-txt" data-a="yes" onclick="ansYesno(this)">😊 Yes, it can.</button>
+      <button class="opt big-txt" data-a="no" onclick="ansYesno(this)">🙅 No, it can't.</button>
+    </div><div class="fb" id="gfb"></div>`;
+  setTimeout(()=>speak(q,0.75),350);
+}
+window.ansYesno=(el)=>{
+  if(G.lock)return;G.lock=true;
+  const right=el.dataset.a===G.answer;
+  if(right){el.classList.add('right');ding();addStar();G.got++;
+    $('gfb').className='fb good';$('gfb').textContent='🗣️ '+G.ansFull+' 你也大声说！';
+  }else{
+    el.classList.add('wrong');boop();
+    document.querySelectorAll('.opt').forEach(o=>{if(o.dataset.a===G.answer)o.classList.add('right');});
+    $('gfb').className='fb bad';$('gfb').textContent='是 '+G.ansFull+' 跟着说一遍～';
+  }
+  speak(G.ansFull,0.78);
+  G.i++;setTimeout(nextRound,1900);
+};
+
+function sortEngine(pools){
+  const item=pick(pools.items);
+  G.answer=item.kind;G.item=item;
+  $('gameStage').innerHTML=gameDots()+`
+    <div class="gq"><span class="qemo">${item.e}</span>${item.w}</div>
+    <div class="gsub">它应该放进哪个篮子？</div>
+    <div class="bins">${pools.bins.map(b=>`
+      <button class="bin" style="background:${b.bg}" data-k="${b.k}" onclick="ansSort(this)">
+        <span class="bemo">${b.e}</span>${b.nm}</button>`).join('')}
+    </div><div class="fb" id="gfb"></div>`;
+  speak(item.w,0.75);
+}
+window.ansSort=(el)=>{
+  if(G.lock)return;
+  if(el.dataset.k===G.answer){
+    G.lock=true;ding();addStar();G.got++;
+    const s=G.item.sentence;
+    $('gfb').className='fb good';$('gfb').textContent='✅ '+s;
+    speak(s,0.78);
+    G.i++;setTimeout(nextRound,1700);
+  }else{el.classList.add('shake');boop();setTimeout(()=>el.classList.remove('shake'),450);}
+};
+function roundSort(){
+  const an=ANIMALS.filter(a=>a.lv<=2&&!['fish','chicken'].includes(a.w))
+    .map(a=>({...a,kind:'animal',sentence:`${cap(artOf(a.w))} ${a.w} is an animal.`}));
+  const fo=FOODS.filter(f=>f.lv<=2&&!['fish','chicken'].includes(f.w))
+    .map(f=>({...f,kind:'food',sentence:`${cap(f.w)} is food.`}));
+  sortEngine({items:an.concat(fo),bins:[
+    {k:'animal',nm:'Animal 动物',e:'🐾',bg:'linear-gradient(135deg,#A8E063,#56AB2F)'},
+    {k:'food',nm:'Food 食物',e:'🍽️',bg:'linear-gradient(135deg,#FFA751,#FF5E62)'}]});
+}
+function roundSort3(){
+  const an=ANIMALS.filter(a=>a.lv===1&&!['fish','chicken'].includes(a.w)).map(a=>({...a,kind:'animal',sentence:'It is an animal.'}));
+  const fo=FOODS.filter(f=>f.lv===1).map(f=>({...f,kind:'food',sentence:'It is food.'}));
+  const to=TOYS.filter(t=>t.lv===1).map(t=>({...t,kind:'toy',sentence:'It is a toy.'}));
+  sortEngine({items:an.concat(fo,to),bins:[
+    {k:'animal',nm:'Animal',e:'🐾',bg:'linear-gradient(135deg,#A8E063,#56AB2F)'},
+    {k:'food',nm:'Food',e:'🍽️',bg:'linear-gradient(135deg,#FFA751,#FF5E62)'},
+    {k:'toy',nm:'Toy',e:'🧸',bg:'linear-gradient(135deg,#89F7FE,#66A6FF)'}]});
+}
+function tprEngine(list,verb){
+  const target=pick(list);
+  const opts=shuffle([target,...shuffle(list.filter(w=>w.w!==target.w)).slice(0,2)]);
+  const instr=verb?`Touch your ${target.w}!`:target.w;
+  G.answer=target.w;G.instr=instr;
+  $('gameStage').innerHTML=gameDots()+`
+    <div class="gq">${verb?'听指令！点出来，再摸摸自己的～':'听指令，点出正确的动作！'}</div>
+    <div class="gsub">点 🔊 再听一遍</div>
+    <button class="speak-big" onclick="speak('${instr.replace(/'/g,"\\'")}',0.75)">🔊</button>
+    <div class="opts">${opts.map(o=>`
+      <button class="opt" data-w="${o.w}" onclick="ansTpr(this)"><span class="oemo">${o.e}</span>${o.w}${showCN?`<div style="font-size:12px;color:#8A8AA3;font-weight:600">${o.cn}</div>`:''}</button>`).join('')}
+    </div><div class="fb" id="gfb"></div>`;
+  setTimeout(()=>speak(instr,0.75),350);
+}
+window.ansTpr=(el)=>{
+  if(G.lock)return;
+  if(el.dataset.w===G.answer){
+    G.lock=true;el.classList.add('right');ding();addStar();G.got++;
+    $('gfb').className='fb good';$('gfb').textContent='👏 '+G.instr+' 做个动作吧！';
+    speak(G.instr,0.8,true);
+    G.i++;setTimeout(nextRound,1400);
+  }else{el.classList.add('wrong');el.classList.add('shake');boop();
+    setTimeout(()=>el.classList.remove('shake'),450);speak(G.instr,0.7);}
+};
+function roundTpr(){tprEngine(BODY,true);}
+function roundClassroom(){tprEngine(SCHOOL_ACTIONS,false);}
+
+/* ================= SENTENCE FACTORY ================= */
+let F=null;
+function renderFactory(){
+  $('ftPicker').innerHTML=curPlanet.templates.map((t,i)=>`
+    <button class="ft ${i===0?'active':''}" data-i="${i}" onclick="setTemplate(${i})">
+      <span class="fte">🧱</span>${t.label}</button>`).join('');
+  setTemplate(0);
+}
+window.setTemplate=(i)=>{
+  document.querySelectorAll('.ft').forEach(b=>b.classList.toggle('active',+b.dataset.i===i));
+  const tpl=curPlanet.templates[i];
+  F={tpl,slots:tpl.parts.filter(p=>p.t==='slot').map(p=>({kind:p.k,word:null,e:null,hex:null})),starGiven:false};
+  $('answerRow').innerHTML='';$('sFeedback').innerHTML='';
+  renderSentence();renderTray();
+};
+function articleFor(partIdx){
+  const parts=F.tpl.parts;let si=-1;
+  for(let j=partIdx+1;j<parts.length;j++){if(parts[j].t==='slot'){si=F.tpl.parts.slice(0,j+1).filter(p=>p.t==='slot').length-1;break;}}
+  if(si<0)return 'a';
+  const w=F.slots[si]&&F.slots[si].word;
+  return w?artOf(w):'a';
+}
+function renderSentence(){
+  let si=0;
+  $('sentenceLine').innerHTML=F.tpl.parts.map((p,idx)=>{
+    if(p.t==='fix')return p.v?`<span class="fixed">${p.v}</span>`:'';
+    if(p.t==='art'||p.t==='art2'){const a=articleFor(idx);return `<span class="fixed">${p.cap?cap(a):a}</span>`;}
+    const s=F.slots[si++];
+    if(s.word){
+      const vis=s.hex?`<span class="se"><span style="display:inline-block;width:26px;height:26px;border-radius:50%;background:${s.hex};border:3px solid #fff;box-shadow:0 1px 4px rgba(0,0,0,.2);vertical-align:middle"></span></span>`:`<span class="se">${s.e}</span>`;
+      return `<span class="slot filled" onclick="clearSlot(${si-1})">${vis}${s.word}</span>`;
+    }
+    return `<span class="slot">❓</span>`;
+  }).join('');
+}
+window.clearSlot=(i)=>{F.slots[i]={...F.slots[i],word:null,e:null,hex:null};F.starGiven=false;$('answerRow').innerHTML='';$('sFeedback').innerHTML='';renderSentence();};
+const TRAY_LABEL={animal:'🐾 动物',verb:'🏃 动作',food:'🍎 食物',body:'🖐️ 身体',bodypl:'✌️ 身体（有两个的）',color:'🎨 颜色',toy:'🧸 玩具',thing:'📦 东西',school:'🏫 学校物品'};
+function chipsFor(kind){
+  switch(kind){
+    case 'animal':return ANIMALS.filter(a=>a.lv<=2);
+    case 'verb':return Object.entries(VERBS).map(([w,v])=>({w,e:v.e,cn:v.cn}));
+    case 'food':return FOODS.filter(f=>f.lv<=2);
+    case 'body':return BODY;
+    case 'bodypl':return BODY.filter(b=>b.pl).map(b=>({w:b.pl,e:b.e,cn:b.cn}));
+    case 'color':return COLORS;
+    case 'toy':return TOYS.filter(t=>t.lv<=2);
+    case 'thing':return [
+      {w:'cat',e:'🐱',cn:'猫'},{w:'dog',e:'🐶',cn:'狗'},{w:'frog',e:'🐸',cn:'青蛙'},
+      {w:'apple',e:'🍎',cn:'苹果'},{w:'banana',e:'🍌',cn:'香蕉'},{w:'egg',e:'🥚',cn:'鸡蛋'},
+      {w:'ball',e:'🏐',cn:'球'},{w:'car',e:'🚗',cn:'小汽车'},{w:'balloon',e:'🎈',cn:'气球'},{w:'bird',e:'🐦',cn:'鸟'}];
+    case 'school':return SCHOOL.filter((s,i,arr)=>arr.findIndex(x=>x.w===s.w)===i);
+  }
+  return [];
+}
+function renderTray(){
+  const kinds=[...new Set(F.slots.map(s=>s.kind))];
+  $('chipTray').innerHTML=kinds.map(k=>`
+    <h4>${TRAY_LABEL[k]}</h4>
+    <div class="chips">${chipsFor(k).map(c=>{
+      const cj=JSON.stringify({w:c.w,e:c.e||'',hex:c.hex||''}).replace(/"/g,'&quot;');
+      const vis=c.hex?`<span class="csw" style="background:${c.hex}"></span>`:`<span class="ce">${c.e}</span>`;
+      return `<button class="chip ${c.hex?'color-chip':''}" onclick="tapChip('${k}',${cj})">${vis}${c.w}</button>`;
+    }).join('')}</div>`).join('');
+}
+window.tapChip=(kind,c)=>{
+  speak(c.w,0.78);
+  let slot=F.slots.find(s=>s.kind===kind&&!s.word);
+  if(!slot)slot=F.slots.find(s=>s.kind===kind);
+  if(!slot)return;
+  slot.word=c.w;slot.e=c.e;slot.hex=c.hex||null;
+  F.starGiven=false;$('answerRow').innerHTML='';$('sFeedback').innerHTML='';
+  renderSentence();
+  if(F.slots.every(s=>s.word))setTimeout(playSentence,600);
+};
+function sentenceText(){
+  let si=0;
+  const raw=F.tpl.parts.map((p,idx)=>{
+    if(p.t==='fix')return p.v;
+    if(p.t==='art'||p.t==='art2'){const a=articleFor(idx);return p.cap?cap(a):a;}
+    const s=F.slots[si++];return s.word||'___';
+  }).filter(x=>x).join(' ');
+  return raw.replace(/\s+([.?,!])/g,'$1');
+}
+window.playSentence=()=>{
+  if(!F.slots.every(s=>s.word)){
+    $('sFeedback').innerHTML='<span style="color:#8A8AA3;font-size:15px">👇 先点下面的词语积木，把句子拼完整～</span>';
+    return;
+  }
+  const text=sentenceText();
+  speak(text,0.72);
+  const tpl=F.tpl;
+  if(tpl.judge){
+    const a=F.slots.find(s=>s.kind==='animal'),v=F.slots.find(s=>s.kind==='verb');
+    const entry=ANIMALS.find(x=>x.w===a.word);
+    const ok=entry&&entry.can.includes(v.word);
+    if(ok){
+      $('sFeedback').innerHTML='<span class="sfe">✅</span><span style="color:#4CAF7D">Yes! 说得对，再大声说一遍！</span>';
+      speak('Yes!',0.85,true);giveSentenceStar();
+    }else{
+      const corr=`No! ${cap(artOf(a.word))} ${a.word} can't ${v.word}!`;
+      $('sFeedback').innerHTML=`<span class="sfe">🙅</span><span style="color:#EF5350">真的吗？${corr} 跟着说～</span>`;
+      speak(corr,0.75,true);giveSentenceStar();
+    }
+  }else if(tpl.question){
+    const a=F.slots.find(s=>s.kind==='animal'),v=F.slots.find(s=>s.kind==='verb');
+    const entry=ANIMALS.find(x=>x.w===a.word);
+    const ok=entry&&entry.can.includes(v.word);
+    F.qOk=ok;
+    $('sFeedback').innerHTML='<span style="color:#8A8AA3;font-size:15px">🤔 你来回答！</span>';
+    $('answerRow').innerHTML=`
+      <button class="btn ghost" onclick="ansFactory(true,this)">😊 Yes, it can.</button>
+      <button class="btn ghost" onclick="ansFactory(false,this)">🙅 No, it can't.</button>`;
+  }else if(tpl.three){
+    $('sFeedback').innerHTML='<span class="sfe">⭐</span><span style="color:#FF7043">三句小达人！你也连着说三句！</span>';
+    giveSentenceStar();
+  }else{
+    $('sFeedback').innerHTML='<span class="sfe">🗣️</span><span style="color:#4CAF7D">很棒！大声说一遍给爸爸妈妈听！</span>';
+    giveSentenceStar();
+  }
+};
+window.ansFactory=(saidYes,el)=>{
+  const right=saidYes===F.qOk;
+  const full=F.qOk?'Yes, it can.':"No, it can't.";
+  if(right){ding();$('sFeedback').innerHTML='<span class="sfe">🎉</span><span style="color:#4CAF7D">'+full+' 你也说一遍！</span>';giveSentenceStar();}
+  else{boop();$('sFeedback').innerHTML='<span class="sfe">🤗</span><span style="color:#EF5350">是 '+full+' 跟着说～</span>';}
+  speak(full,0.78);
+  $('answerRow').innerHTML='';
+};
+function giveSentenceStar(){if(!F.starGiven){F.starGiven=true;addStar();}}
+window.resetSentence=()=>{
+  F.slots.forEach(s=>{s.word=null;s.e=null;s.hex=null;});
+  F.starGiven=false;$('answerRow').innerHTML='';$('sFeedback').innerHTML='';
+  renderSentence();
+};
+
+/* ================= PARENT ================= */
+function switchPSec(k){
+  document.querySelectorAll('.ptab2').forEach(b=>b.classList.toggle('active',b.dataset.ps===k));
+  document.querySelectorAll('.psec').forEach(s=>s.classList.remove('active'));
+  $('ps-'+k).classList.add('active');
+}
+window.switchPSec=switchPSec;
+function renderGPT(){
+  $('gptBoxes').innerHTML=GPT_PROMPTS.map((p,i)=>`
+    <h3>${p.wk}</h3>
+    <div class="prompt-box">
+      <button class="copy-btn" onclick="copyPrompt(${i},this)">📋 复制</button>
+      <pre id="gp${i}">${p.txt}</pre>
+    </div>`).join('');
+}
+window.copyPrompt=(i,btn)=>{
+  const txt=GPT_PROMPTS[i].txt;
+  const done=()=>{btn.textContent='✅ 已复制';setTimeout(()=>btn.textContent='📋 复制',2000);};
+  if(navigator.clipboard&&navigator.clipboard.writeText){
+    navigator.clipboard.writeText(txt).then(done).catch(()=>fallbackCopy(txt,done));
+  }else fallbackCopy(txt,done);
+};
+function fallbackCopy(txt,done){
+  try{
+    const ta=document.createElement('textarea');ta.value=txt;
+    ta.style.position='fixed';ta.style.opacity='0';document.body.appendChild(ta);
+    ta.select();document.execCommand('copy');document.body.removeChild(ta);done();
+  }catch(e){alert('请长按文字手动复制');}
+}
+
+/* ---- boot ---- */
+renderHome();renderGPT();
+window.openPlanet=openPlanet;window.goBack=goBack;window.switchPTab=switchPTab;window.speak=speak;
+</script>
+</body>
+</html>
