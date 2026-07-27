@@ -184,6 +184,44 @@ button{font-family:inherit;border:none;cursor:pointer;background:none;color:inhe
 .lvl{display:inline-block;border-radius:6px;padding:1px 8px;font-size:12px;font-weight:800;color:#fff;margin-right:2px;}
 .l1{background:#B0BEC5;} .l2{background:#64B5F6;} .l3{background:#FFB74D;} .l4{background:#4CAF7D;}
 
+/* ---------- growth record ---------- */
+.gstats{display:grid;grid-template-columns:repeat(auto-fit,minmax(118px,1fr));gap:10px;margin:8px 0 6px;}
+.gstat{background:#FAF6EF;border:1px solid #EFE5D3;border-radius:14px;padding:12px;text-align:center;}
+.gstat b{font-size:22px;display:block;color:var(--coral);}
+.gstat span{font-size:12px;color:var(--ink2);}
+.mastery-legend{display:flex;gap:12px;flex-wrap:wrap;font-size:12px;color:var(--ink2);margin:6px 0 10px;}
+.mlg{display:inline-flex;align-items:center;gap:5px;}
+.mdot{width:12px;height:12px;border-radius:4px;display:inline-block;}
+.wchips{display:flex;flex-wrap:wrap;gap:8px;margin:8px 0 4px;}
+.wchip{border-radius:12px;padding:7px 11px;font-size:14px;font-weight:700;border:none;background:#F0EDE6;color:#8A8AA3;}
+.wchip .rt{font-size:10px;background:rgba(0,0,0,.16);border-radius:6px;padding:1px 5px;margin-left:5px;}
+.wchip.m1{background:#FFF3CD;color:#8A6D1A;}
+.wchip.m2{background:#DDEBFF;color:#2A5DA8;}
+.wchip.m3{background:#D9F2E4;color:#1F7A4D;}
+.wchip.m4{background:#4CAF7D;color:#fff;}
+.wchip.m4 .rt{background:rgba(255,255,255,.28);}
+.tchips{display:flex;flex-wrap:wrap;gap:8px;margin:6px 0;}
+.tchip{background:#FDECEC;color:#B33;border-radius:10px;padding:6px 10px;font-size:13px;font-weight:700;}
+.gnote-in{width:100%;border:1px solid #EFE5D3;border-radius:12px;padding:10px;font-family:inherit;font-size:14px;min-height:64px;background:#FFFDF8;color:var(--ink);}
+.gnotes{margin:8px 0 0 18px;}
+.gnotes li{margin:4px 0;font-size:13px;color:#5A5A75;}
+.gbtns{display:flex;gap:10px;flex-wrap:wrap;margin:10px 0;}
+.streak-badge{display:inline-block;background:#FFF1E0;color:#D96C1E;border-radius:999px;padding:6px 16px;font-weight:800;font-size:14px;margin-top:10px;}
+/* ---------- speaking record & gold wall ---------- */
+.chartbox{background:#FFFDF8;border:1px solid #F0E9DC;border-radius:14px;padding:12px;margin:10px 0;}
+.chart-cap{font-size:12px;color:#8A8AA3;min-height:16px;margin-top:4px;text-align:center;}
+.tsub{display:flex;gap:14px;flex-wrap:wrap;font-size:13px;color:#5A5A75;margin:6px 0;}
+.tsub b{color:var(--coral);}
+.fixrow{display:flex;flex-direction:column;gap:6px;margin:8px 0;}
+.fixitem{background:#FFFDF8;border:1px solid #F0E9DC;border-radius:12px;padding:8px 12px;font-size:13.5px;}
+.fixitem .bad{color:#C62828;text-decoration:line-through;margin-right:8px;}
+.fixitem .good{color:#1F7A4D;font-weight:700;}
+.talk-list{margin:6px 0 0 18px;}
+.talk-list li{font-size:13px;margin:4px 0;color:#5A5A75;}
+.gold-list{display:grid;gap:12px;}
+.gold-item{background:var(--card);border-radius:20px;padding:18px 20px;box-shadow:var(--shadow);text-align:left;font-size:20px;font-weight:800;line-height:1.5;color:var(--ink);}
+.gold-item:active{transform:scale(.97);}
+.gold-item small{display:block;font-size:12px;color:#B8B8CC;font-weight:600;margin-top:6px;}
 .tts-warn{display:none;background:#FDECEC;color:#B33;border-radius:12px;padding:10px 14px;font-size:13px;margin:0 16px 10px;max-width:928px;}
 .confetti{position:fixed;top:-20px;font-size:22px;z-index:999;pointer-events:none;animation:fall linear forwards;}
 @media (max-width:480px){
@@ -209,6 +247,7 @@ button{font-family:inherit;border:none;cursor:pointer;background:none;color:inhe
     <span class="rocket">🚀</span>
     <h2>Morton 的剑桥英语星球</h2>
     <p>每天 15 分钟，点一个星球开始今天的探险吧！</p>
+    <div id="streakBadge"></div>
   </div>
   <div class="planets" id="planetGrid"></div>
   <div class="daily-tip">
@@ -216,12 +255,23 @@ button{font-family:inherit;border:none;cursor:pointer;background:none;color:inhe
     <div><b>今日探险路线（15 分钟）</b>
     <span>数一数热身 2′ → 单词卡 5′ → 小游戏 4′ → 句子工厂 4′</span></div>
   </div>
+  <button class="daily-tip" id="goldCard" style="display:none;width:100%;text-align:left" onclick="openGold()">
+    <div class="big">🏆</div>
+    <div><b>我的金句墙 <span id="goldCount"></span></b>
+    <span>Morton 自己说出的最棒句子，点进去听一听</span></div>
+  </button>
   <div class="daily-tip">
     <div class="big">🔢</div>
     <div style="flex:1"><b>数字热身 · Warm up!</b>
     <span>按顺序点数字，大声跟着说</span>
     <div class="chips" style="margin-top:8px" id="numRow"></div></div>
   </div>
+</div>
+
+<!-- ============ GOLD WALL ============ -->
+<div class="screen" id="scr-gold">
+  <p class="hint">🏆 这些都是 Morton 在口语对话里<b>自己说出</b>的句子！点一句听一听，再大声跟读一遍。</p>
+  <div class="gold-list" id="goldList"></div>
 </div>
 
 <!-- ============ PLANET ============ -->
@@ -260,7 +310,8 @@ button{font-family:inherit;border:none;cursor:pointer;background:none;color:inhe
 <div class="screen" id="scr-parent">
 <div class="parent-wrap">
   <div class="ptabs2">
-    <button class="ptab2 active" data-ps="plan" onclick="switchPSec('plan')">📅 本月规划</button>
+    <button class="ptab2 active" data-ps="growth" onclick="switchPSec('growth')">📈 成长记录</button>
+    <button class="ptab2" data-ps="plan" onclick="switchPSec('plan')">📅 本月规划</button>
     <button class="ptab2" data-ps="daily" onclick="switchPSec('daily')">⏱️ 每日流程</button>
     <button class="ptab2" data-ps="gpt" onclick="switchPSec('gpt')">🎙️ GPT Live 指令</button>
     <button class="ptab2" data-ps="audio" onclick="switchPSec('audio')">🎧 磨耳朵</button>
@@ -268,7 +319,47 @@ button{font-family:inherit;border:none;cursor:pointer;background:none;color:inhe
     <button class="ptab2" data-ps="tips" onclick="switchPSec('tips')">💡 引导技巧</button>
   </div>
 
-  <div class="psec active" id="ps-plan">
+  <div class="psec active" id="ps-growth">
+    <h3>成长总览</h3>
+    <div class="gstats" id="gStats"></div>
+    <div class="note" id="gStoreWarn" style="display:none">⚠️ 当前窗口无法长期保存记录（例如在聊天预览里打开时）。请通过 iPad 主屏幕图标或浏览器打开网站使用，数据会自动保存在设备上。</div>
+    <h3>单词掌握地图</h3>
+    <p style="font-size:13px;color:#8A8AA3;margin-top:-4px">底色是自动统计（游戏答题+点读）；<b>点一个词可以打人工等级</b>：L1 能跟读 → L2 能识别 → L3 提示下能说 → L4 独立使用，再点一下循环切换/清除。人工等级优先于自动统计。</p>
+    <div class="mastery-legend">
+      <span class="mlg"><span class="mdot" style="background:#F0EDE6"></span>未接触</span>
+      <span class="mlg"><span class="mdot" style="background:#FFF3CD"></span>刚接触</span>
+      <span class="mlg"><span class="mdot" style="background:#DDEBFF"></span>能识别</span>
+      <span class="mlg"><span class="mdot" style="background:#D9F2E4"></span>比较熟</span>
+      <span class="mlg"><span class="mdot" style="background:#4CAF7D"></span>已掌握</span>
+    </div>
+    <div id="gMap"></div>
+    <h3>疑难榜（自动统计）</h3>
+    <div id="gTrouble"></div>
+    <h3>🎙️ 口语对话记录（GPT Live 复盘）</h3>
+    <p style="font-size:13px;color:#8A8AA3;margin-top:-4px">GPT Live 练完会按模板输出一段「Morton口语复盘」。整段复制，粘贴到下面，点「解析并保存」——评分曲线、纠错本、金句墙自动生成。</p>
+    <textarea class="gnote-in" id="talkIn" style="min-height:110px" placeholder="粘贴以【Morton口语复盘】开头的整段内容…"></textarea>
+    <div class="gbtns">
+      <button class="btn" onclick="saveTalk(this)">解析并保存</button>
+      <span id="talkMsg" style="font-size:13px;color:#4CAF7D;font-weight:700;align-self:center"></span>
+    </div>
+    <div id="talkStats"></div>
+    <h3>家长观察记录</h3>
+    <textarea class="gnote-in" id="gNoteIn" placeholder="例：今天 can't 说顺了 / 对 spider 特别感兴趣 / th 音还是发成 s …"></textarea>
+    <div class="gbtns"><button class="btn" onclick="saveNote(this)">保存这条记录</button></div>
+    <ul class="gnotes" id="gNotes"></ul>
+    <h3>每周同步给 Claude（成长闭环）</h3>
+    <p>每周日点「复制学习周报」，把内容粘贴给 Claude。我会根据数据判断：下周该推进、放缓还是换形式，并把每月情况整理进成长档案。这就是长期陪伴的核心动作，一周只需 1 分钟。</p>
+    <div class="gbtns">
+      <button class="btn" onclick="copyReport(this)">📋 复制学习周报</button>
+      <button class="btn ghost" onclick="downloadBackup()">💾 下载完整备份</button>
+      <button class="btn ghost" onclick="document.getElementById('gImport').click()">📂 导入备份</button>
+      <input type="file" id="gImport" accept=".json,application/json" style="display:none" onchange="importBackup(this)">
+    </div>
+    <div class="note">📌 记录保存在<b>本设备</b>的浏览器里。建议每月点一次「下载完整备份」存进电脑的成长档案文件夹；换新 iPad 时用「导入备份」一键恢复，记录就能一直陪着 Morton 长大。</div>
+    <div id="gImportMsg" style="font-size:13px;color:#4CAF7D;font-weight:700"></div>
+  </div>
+
+  <div class="psec" id="ps-plan">
     <h3>8 月总目标：从「会跟读」走向「提示下能自己说」</h3>
     <p>Morton 已经有不错的语感和模仿力，痛点是<b>单词是散的、句子靠提示</b>。所以这个月不追求词汇量，而是把剑少一级里他最有基础的 4 个主题<b>学透</b>，让每个词都能「串」进 2–3 个句型里说出来。</p>
     <table>
@@ -296,8 +387,9 @@ button{font-family:inherit;border:none;cursor:pointer;background:none;color:inhe
     <h3>每周节奏</h3>
     <ul>
       <li><b>周一到周五</b>：上面的 15 分钟流程，每天新词 ≤3 个</li>
-      <li><b>每周 2–3 次</b>：用 GPT Live 做 10 分钟口语对话（见「GPT Live 指令」页），替换当天的游戏环节即可，总时长不增加</li>
-      <li><b>周六</b>：复习日——不学新词，只玩游戏 + 句子工厂混合复习</li>
+      <li><b>每周 2–3 次 GPT Live</b>（替换当天游戏环节，总时长不增加）：第1次用当周<b>主题指令</b>练句型；第2次用当周<b>场景剧场</b>指令（动物园/快餐店/小医生/玩具店/开学第一天），让他「用英语办成一件事」</li>
+      <li><b>周六</b>：复习日——游戏混合复习 + 把本周场景<b>再演一遍</b>（加一点小变化）。同一场景重复2-3遍是建立自信的关键，重复不是浪费</li>
+      <li><b>🎙️ 每周留一条语音</b>：从金句墙挑他这周说得最棒的一句，用手机录10秒存进相册或成长档案文件夹——攒12年，就是他英语成长的声音日记</li>
       <li><b>周日</b>：休息或只听音频，保护兴趣</li>
     </ul>
     <h3>碎片时间（不算在 15 分钟内）</h3>
@@ -311,6 +403,7 @@ button{font-family:inherit;border:none;cursor:pointer;background:none;color:inhe
   <div class="psec" id="ps-gpt">
     <h3>GPT Live 每周对话指令</h3>
     <p>每周把对应指令<b>整段复制</b>发给 GPT，再开始语音对话。指令已按 Morton 的学情写好规则（慢语速、提示阶梯、纠错方式），并和本工具当周内容同步。每次 10 分钟左右，每周 2–3 次。</p>
+    <div class="note">🔁 <b>练完后的固定动作（10秒）</b>：对话结束 GPT 会按「Morton口语复盘」模板输出一段复盘 → 整段复制 → 到「成长记录」页的口语粘贴框 → 解析保存。评分曲线、纠错本、金句墙就自动更新了。<br>💡 进阶：把指令末尾的复盘模板存进 ChatGPT 的「自定义指令」，以后练完说一句「按模板复盘」即可。</div>
     <div id="gptBoxes"></div>
     <div class="note">💡 用法提示：对话时让 Morton 戴耳机或外放都可以，但<b>家长在旁边</b>，当他卡住时用手势提示他看你口型，不要替他回答。结束后 GPT 会用中文告诉你他今天的表现，可以记到「进度评估」里。</div>
   </div>
@@ -549,7 +642,18 @@ const GPT_PROMPTS=[
 ② 猜动物：你描述"It is big. It can run. What is it?"让他猜；猜对后请他说完整句 It is a lion.
 ③ 小老师时间：请 Morton 提问你 Can a ___ ___?，你认真回答，偶尔故意答错让他纠正你。
 ④ 傻问题快答：Can a fish fly? Can a cake swim? Can an elephant jump? 要求完整句回答。
-结束时：用英语热情表扬；然后用中文告诉家长：他今天独立说出了哪些完整句、哪些词还需要句首提示。`},
+结束时：先用英语热情表扬他。然后严格按下面模板输出复盘（中文，发给家长看），不要在模板之外添加任何解释：
+【Morton口语复盘】
+日期：今天日期（格式如2026-08-02）
+主题：本次主要话题
+时长：约X分钟
+独立说出：他无需提示独立说出的完整英文句，用｜分隔，没有则写无
+提示后能说：给句首或提示后能说出的句子，用｜分隔
+纠错：最多3个，格式为 错误说法 → 正确说法，用｜分隔
+金句：今天他说出的最棒的一句英语
+明日建议：一句话，建议明天练的话题或句型
+评分：听懂X 完整句X 词汇X 自信X 总分X（前四项各5分制，总分10分制）
+备注：发音或其他需要家长注意的一点，没有写无`},
 {wk:'第2周 · 美食 (8.4–8.10)',txt:`你是6岁中国男孩 Morton 的英语口语老师 Coco，温柔又爱笑。现在进行约10分钟的口语游戏。
 必须遵守的规则：（同前）語速很慢、每句≤6词、一次一个问题并等待；提示阶梯：重复→放慢→两个选项→给句首→一句中文后立刻回英语；他只答单词时先表扬再示范完整句请他跟说；不说"错"，用正确句复述；具体表扬。
 本周内容：食物 bread, burger, apple, banana, milk, water, egg, juice, rice, cake, ice cream, orange, grape, chicken；句型 I like... / I don't like... / Do you like...? Yes, I do. / No, I don't. 复习：It is a... / Is it food?
@@ -558,7 +662,18 @@ const GPT_PROMPTS=[
 ② 我的餐盘：请他说3样喜欢的："I like ___." 你夸张回应自己的喜好让他听（I like ice cream!）。
 ③ 小老师时间：他问你 Do you like ___?，你回答，偶尔说傻话（I like spiders!）让他大笑并纠正 Spiders are not food!（可简化为 No! Not food!）
 ④ 分类快答：Is an apple food? Is a cat food? 引导完整句 Yes, it is. / No, it isn't.（这是新句型，多示范多包容）
-结束时：英语表扬 + 中文向家长小结：独立说出的句子、需提示的地方、like/don't like 是否分得清。`},
+结束时：先用英语热情表扬他。然后严格按下面模板输出复盘（中文，发给家长看），不要在模板之外添加任何解释：
+【Morton口语复盘】
+日期：今天日期（格式如2026-08-02）
+主题：本次主要话题
+时长：约X分钟
+独立说出：他无需提示独立说出的完整英文句，用｜分隔，没有则写无
+提示后能说：给句首或提示后能说出的句子，用｜分隔
+纠错：最多3个，格式为 错误说法 → 正确说法，用｜分隔
+金句：今天他说出的最棒的一句英语
+明日建议：一句话，建议明天练的话题或句型
+评分：听懂X 完整句X 词汇X 自信X 总分X（前四项各5分制，总分10分制）
+备注：请说明 like/don't like 是否分得清，及发音要点`},
 {wk:'第3周 · 身体 (8.11–8.17)',txt:`你是6岁中国男孩 Morton 的英语口语老师 Coco，温柔又爱笑。现在进行约10分钟的口语游戏。
 必须遵守的规则：（同前）慢语速、短句、一次一问并等待；提示阶梯：重复→放慢→两个选项→句首→一句中文后回英语；只答单词先表扬再补完整句；用复述纠错；具体表扬。
 本周内容：身体 eye(s), ear(s), nose, mouth, face, hair, head, hand(s), arm(s), leg(s), foot/feet, smile；颜色词复习；句型 This is my... / I have two... / Touch your...
@@ -567,7 +682,18 @@ const GPT_PROMPTS=[
 ② 数一数：How many eyes? 引导 I have two eyes. （注意示范 feet：I have two feet.）
 ③ 小老师时间：Morton 指挥你 Touch your ___!，你做动作，偶尔故意摸错让他纠正。
 ④ 画像描述：请他说自己："This is my nose. My hair is black. I have two hands." 你先示范说你自己。
-结束时：英语表扬 + 中文向家长小结：能听懂哪些指令、能独立说出哪些句子。`},
+结束时：先用英语热情表扬他。然后严格按下面模板输出复盘（中文，发给家长看），不要在模板之外添加任何解释：
+【Morton口语复盘】
+日期：今天日期（格式如2026-08-02）
+主题：本次主要话题
+时长：约X分钟
+独立说出：他无需提示独立说出的完整英文句，用｜分隔，没有则写无
+提示后能说：给句首或提示后能说出的句子，用｜分隔
+纠错：最多3个，格式为 错误说法 → 正确说法，用｜分隔
+金句：今天他说出的最棒的一句英语
+明日建议：一句话，建议明天练的话题或句型
+评分：听懂X 完整句X 词汇X 自信X 总分X（前四项各5分制，总分10分制）
+备注：请说明他能听懂哪些身体指令，及发音要点`},
 {wk:'第4周 · 玩具 (8.18–8.24)',txt:`你是6岁中国男孩 Morton 的英语口语老师 Coco，温柔又爱笑。现在进行约10分钟的口语游戏。
 必须遵守的规则：（同前）慢语速、短句、一次一问并等待；提示阶梯；先表扬再补完整句；复述纠错；具体表扬。
 本周内容：玩具 ball, car, train, plane, boat, bike, balloon, teddy bear, kite, robot, doll, football；颜色；句型 I have a... / This is my... / It is (blue). / 目标挑战：连说三句 This is my car. It is red. I like it!
@@ -576,7 +702,18 @@ const GPT_PROMPTS=[
 ② 拿玩具来！请家长让 Morton 拿一个真实玩具，对着它说：This is my ___. It is ___. I like it!（本周核心，耐心用句首提示帮他连成三句）
 ③ 猜玩具：你描述 It is red. It can fly. What is it?（kite/plane/balloon）让他猜。
 ④ 小老师时间：他描述一个玩具让你猜；他说不出时给句首 It is...
-结束时：英语表扬 + 中文向家长小结：三句连说完成度如何、哪一句还需要提示。`},
+结束时：先用英语热情表扬他。然后严格按下面模板输出复盘（中文，发给家长看），不要在模板之外添加任何解释：
+【Morton口语复盘】
+日期：今天日期（格式如2026-08-02）
+主题：本次主要话题
+时长：约X分钟
+独立说出：他无需提示独立说出的完整英文句，用｜分隔，没有则写无
+提示后能说：给句首或提示后能说出的句子，用｜分隔
+纠错：最多3个，格式为 错误说法 → 正确说法，用｜分隔
+金句：今天他说出的最棒的一句英语（三句连说成功的话记这里）
+明日建议：一句话，建议明天练的话题或句型
+评分：听懂X 完整句X 词汇X 自信X 总分X（前四项各5分制，总分10分制）
+备注：请说明三句连说完成度、哪一句还需提示`},
 {wk:'第5周 · 开学准备+总复习 (8.25–8.31)',txt:`你是6岁中国男孩 Morton 的英语口语老师 Coco，温柔又爱笑。他9月1日就要上小学一年级了！现在进行约10分钟的口语游戏。
 必须遵守的规则：（同前）慢语速、短句、一次一问并等待；提示阶梯；先表扬再补完整句；复述纠错；具体表扬。
 本周内容：课堂词 school, teacher, book, pen, pencil, bag, chair, ruler；课堂指令 Stand up. Sit down. Listen. Look. Open your book. Close your book.；混合复习：动物/食物/身体/玩具四个主题的核心句型。
@@ -585,12 +722,133 @@ const GPT_PROMPTS=[
 ② 书包里有什么：I have a pencil. This is my bag. 让他说3样文具。
 ③ 大复习抽查（游戏化）：混合问 Can a frog jump? / Do you like rice? / Touch your head! / What is it?(描述猜物)，答对积分。
 ④ 毕业小舞台：请他连说三句介绍任何东西（玩具/动物/自己），你当观众鼓掌。
-结束时：热情祝贺他准备好上学了！中文向家长总结：这个月他从哪些方面进步了、开学后建议继续的1-2个练习。`}
+结束时：先用英语热情祝贺他准备好上学了！然后严格按下面模板输出复盘（中文，发给家长看），不要在模板之外添加任何解释：
+【Morton口语复盘】
+日期：今天日期（格式如2026-08-02）
+主题：本次主要话题
+时长：约X分钟
+独立说出：他无需提示独立说出的完整英文句，用｜分隔，没有则写无
+提示后能说：给句首或提示后能说出的句子，用｜分隔
+纠错：最多3个，格式为 错误说法 → 正确说法，用｜分隔
+金句：今天他说出的最棒的一句英语
+明日建议：一句话，开学后建议继续的练习
+评分：听懂X 完整句X 词汇X 自信X 总分X（前四项各5分制，总分10分制）
+备注：总结这个月他最大的进步和开学后要注意的一点`}
 ];
+const SCENE_RULES=`必须遵守的规则：全程以英语为主，语速很慢，每句不超过6个单词；一次只问一个问题，问完安静等他答；他卡住时按顺序帮助：原句重复→放慢→给两个选项→给句首；不要替他说出完整句子，说一半让他接；仍不懂才用一句简短中文提示，然后马上回到英语；他只答一个词时先表扬，再示范完整句请他跟说一遍；不说 wrong/不对，用正确句子自然复述；始终留在角色里，但纠错和提示时可以短暂跳出；多叫他的名字，具体表扬。`;
+const SCENE_TPL=`结束时：先用英语热情表扬他。然后严格按下面模板输出复盘（中文，发给家长看），不要在模板之外添加任何解释：
+【Morton口语复盘】
+日期：今天日期（格式如2026-08-02）
+主题：本次场景名称
+时长：约X分钟
+独立说出：他无需提示独立说出的完整英文句，用｜分隔，没有则写无
+提示后能说：给句首或提示后能说出的句子，用｜分隔
+纠错：最多3个，格式为 错误说法 → 正确说法，用｜分隔
+金句：今天他说出的最棒的一句英语
+明日建议：一句话，下次重演这个场景时建议加的小变化
+评分：听懂X 完整句X 词汇X 自信X 总分X（前四项各5分制，总分10分制）
+备注：发音或其他需要家长注意的一点，没有写无`;
+const SCENE_PROMPTS=[
+{wk:'🦁 场景1 · 动物园一日游（第1周）',txt:`你是6岁中国男孩 Morton 的英语口语老师 Coco。今天玩「场景剧场」：你扮演动物园向导 Zoe，Morton 来动物园玩，全程约8分钟。
+${SCENE_RULES}
+场景流程（每段约2分钟）：
+① 门口欢迎：Hello! Welcome to the zoo! What's your name? How old are you? 引导他说 I'm Morton. I'm six.
+② 逛动物园：依次"走到"3-4种动物面前（lion, monkey, elephant, frog…），每次问 What is it? / What can it do? / Can it fly? 引导完整句 It is a lion. A lion can run.
+③ 小向导时间：角色互换，请 Morton 当向导给你介绍一种他喜欢的动物（It is a… It can…），你当游客夸张惊叹（Wow! Amazing!）。
+④ 告别：教他自然说 Thank you! Goodbye! See you!
+这个场景本周可以重复玩2次：第二次换不同的动物，语速稍微快一点点。
+${SCENE_TPL}`},
+{wk:'🍔 场景2 · 快餐店点餐（第2周）',txt:`你是6岁中国男孩 Morton 的英语口语老师 Coco。今天玩「场景剧场」：你扮演快餐店店员 Ben，Morton 来买吃的，全程约8分钟。
+${SCENE_RULES}
+场景流程（每段约2分钟）：
+① 欢迎点餐：Hello! What do you want? 引导 I want a burger, please. 练2-3样食物（burger, juice, ice cream, apple…）。
+② 追问细节：Do you like milk or juice? 引导 I like juice. / I don't like milk.
+③ 递餐与道谢：Here you are! 教他接 Thank you! 然后 Bye-bye!
+④ 小店长时间：角色互换，Morton 当店员卖东西给你；你偶尔说傻话（I want a spider, please!）让他大笑并纠正你（No! Not food!）。
+这个场景本周可以重复玩2次：第二次点不同的食物，加上数字（Two apples, please!）。
+${SCENE_TPL}`},
+{wk:'🩺 场景3 · 小小医生（第3周）',txt:`你是6岁中国男孩 Morton 的英语口语老师 Coco。今天玩「场景剧场」：你扮演医生 Dr. Bear，Morton 来看病（假装的，气氛轻松搞笑），全程约8分钟。
+${SCENE_RULES}
+场景流程（每段约2分钟）：
+① 问诊：Hello Morton! Touch your head. / Open your mouth. / Show me your hand. 请家长配合让他边做动作边回应。
+② 检查身体：How many eyes? 引导 I have two eyes. 练 eyes, ears, hands, feet。
+③ 医生说没事：You are OK! Jump three times! 让他边跳边数 one, two, three。
+④ 小医生时间：角色互换，Morton 当医生给你发指令（Touch your nose! Open your mouth!），你做动作偶尔故意做错让他纠正。
+这个场景本周可以重复玩2次：第二次换不同身体部位，加上颜色（My hair is black.）。
+${SCENE_TPL}`},
+{wk:'🧸 场景4 · 玩具店（第4周）',txt:`你是6岁中国男孩 Morton 的英语口语老师 Coco。今天玩「场景剧场」：你扮演玩具店老板 Lily，Morton 来买玩具，全程约8分钟。
+${SCENE_RULES}
+场景流程（每段约2分钟）：
+① 逛店：Hello! Look! I have robots and cars. What do you want? 引导 I want a robot, please.
+② 挑颜色：What colour? Red or blue? 引导 A blue robot, please. 练2-3件玩具加颜色。
+③ 展示宝贝：请他拿一个自己真实的玩具介绍：This is my car. It is red. I like it!（三句连说，本周核心）
+④ 小老板时间：角色互换他当老板；你挑剔又搞笑（I want a pink monster!），逼他多说。
+这个场景本周可以重复玩2次：第二次换不同玩具，试着加数量（Two balls, please!）。
+${SCENE_TPL}`},
+{wk:'🏫 场景5 · 开学第一天（第5周）',txt:`你是6岁中国男孩 Morton 的英语口语老师 Coco。今天玩「场景剧场」：你扮演小学英语老师 Miss Sunny，模拟 Morton 9月1日开学第一天的英语课，全程约8分钟。
+${SCENE_RULES}
+场景流程（每段约2分钟）：
+① 课堂指令：Good morning, class! Stand up! Sit down! Open your book!（请家长准备一本书配合）做对就表扬。
+② 自我介绍：What's your name? How old are you? 引导完整说 Hello! I'm Morton. I'm six.（开学最重要的两句！）
+③ 认识新朋友：你扮演同桌小朋友：Hello! I'm Lucy. Nice to meet you! 教他回 Nice to meet you too! 再互相问 Do you like…?
+④ 小老师时间：角色互换，Morton 当老师对你发课堂指令，你当学生偶尔做错让他纠正。
+这个场景开学前可以重复玩3次，越玩越熟，开学那天他就不会慌。
+${SCENE_TPL}`}
+];
+const PROMPT_ALL=GPT_PROMPTS.concat(SCENE_PROMPTS);
 
 /* ================= CORE ================= */
 let stars=0, curPlanet=null, showCN=true, curLvl=1;
 const $=id=>document.getElementById(id);
+
+/* ---- growth record: local persistent DB ---- */
+const Store={ok:false,
+  init(){try{const t='__mt';localStorage.setItem(t,'1');localStorage.removeItem(t);this.ok=true;}catch(e){this.ok=false;}},
+  load(){if(!this.ok)return null;try{return JSON.parse(localStorage.getItem('mortonDB')||'null');}catch(e){return null;}},
+  save(){if(!this.ok)return;try{localStorage.setItem('mortonDB',JSON.stringify(DB));}catch(e){}}
+};
+Store.init();
+function freshDB(){return {v:1,since:'',sessions:{},words:{},quiz:{yesno:{c:0,w:0},sort:{c:0,w:0},tpr:{c:0,w:0},listen:{c:0,w:0}},factory:{done:0,three:0},ratings:{},notes:[],talks:[]};}
+function normalizeDB(d){
+  const f=freshDB();if(!d||typeof d!=='object')return f;
+  const out=Object.assign(f,d);
+  out.quiz=Object.assign(f.quiz,d.quiz||{});
+  ['yesno','sort','tpr','listen'].forEach(k=>{out.quiz[k]=Object.assign({c:0,w:0},out.quiz[k]||{});});
+  out.factory=Object.assign({done:0,three:0},d.factory||{});
+  out.sessions=d.sessions||{};out.words=d.words||{};out.ratings=d.ratings||{};out.notes=d.notes||[];
+  out.talks=Array.isArray(d.talks)?d.talks:[];
+  return out;
+}
+let DB=normalizeDB(Store.load());
+function todayKey(){const d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');}
+if(!DB.since){DB.since=todayKey();}
+function sess(){const k=todayKey();return DB.sessions[k]||(DB.sessions[k]={stars:0,acts:0});}
+function recordWord(word,correct){
+  const w=DB.words[word]||(DB.words[word]={c:0,w:0,t:0,last:''});
+  if(correct===true)w.c++;else if(correct===false)w.w++;else w.t++;
+  w.last=todayKey();Store.save();
+}
+function recQuiz(kind,right){const q=DB.quiz[kind];if(!q)return;right?q.c++:q.w++;Store.save();}
+function calcStreak(){
+  let n=0;const d=new Date();
+  for(;;){
+    const k=d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+    const s=DB.sessions[k];
+    if(s&&(s.stars>0||s.acts>0)){n++;d.setDate(d.getDate()-1);}
+    else{if(n===0&&k===todayKey()){d.setDate(d.getDate()-1);continue;}break;}
+    if(n>5000)break;
+  }
+  return n;
+}
+function weekStats(){
+  let days=0,st=0;const d=new Date();
+  for(let i=0;i<7;i++){
+    const k=d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+    const s=DB.sessions[k];if(s&&(s.stars>0||s.acts>0)){days++;st+=s.stars;}
+    d.setDate(d.getDate()-1);
+  }
+  return {days,stars:st};
+}
 
 /* ---- TTS ---- */
 let voiceEN=null;
@@ -641,8 +899,10 @@ const boop=()=>tone(200,0,.25,'triangle');
 /* ---- stars & confetti ---- */
 function addStar(n){
   stars+=(n||1);
+  sess().stars+=(n||1);Store.save();
   const el=$('starCount');el.textContent=stars;
   el.parentElement.classList.remove('pop');void el.parentElement.offsetWidth;el.parentElement.classList.add('pop');
+  renderStreak();
   if(stars%5===0){confetti();speak('Great job, Morton!',0.9,true);}
 }
 function confetti(){
@@ -735,6 +995,7 @@ function renderWords(){
 }
 window.tapWord=(pid,lv,i,el)=>{
   const w=PLANETS.find(p=>p.id===pid).words.filter(x=>x.lv===lv)[i];
+  recordWord(w.w);
   speak(w.w,0.75);
   el.classList.remove('pop');void el.offsetWidth;el.classList.add('pop');
 };
@@ -765,6 +1026,7 @@ function nextRound(){
   fn();
 }
 function gameDone(){
+  sess().acts++;Store.save();
   confetti();ding();speak('Well done, Morton!',0.9);
   $('gameStage').innerHTML=`<div class="gdone">
     <span class="big">🏆</span>
@@ -779,7 +1041,7 @@ function roundListen(){
   const pool=curPlanet.words.filter(w=>w.lv<=2);
   const target=pick(pool);
   const opts=shuffle([target,...shuffle(pool.filter(w=>w.w!==target.w)).slice(0,2)]);
-  G.answer=target.w;
+  G.answer=target.w;G.firstTry=true;
   $('gameStage').innerHTML=gameDots()+`
     <div class="gq">听一听，它是谁？</div>
     <div class="gsub">点 🔊 可以再听一遍</div>
@@ -792,11 +1054,13 @@ function roundListen(){
 window.ansListen=(el)=>{
   if(G.lock)return;
   if(el.dataset.w===G.answer){
+    if(G.firstTry){recordWord(G.answer,true);recQuiz('listen',true);}
     G.lock=true;el.classList.add('right');ding();addStar();G.got++;
     $('gfb').className='fb good';$('gfb').textContent='✅ '+cap(G.answer)+'! 跟着说一遍！';
     speak(G.answer,0.78,true);
     G.i++;setTimeout(nextRound,1100);
   }else{
+    if(G.firstTry){recordWord(G.answer,false);recQuiz('listen',false);G.firstTry=false;}
     el.classList.add('wrong');el.classList.add('shake');boop();
     setTimeout(()=>el.classList.remove('shake'),450);
     speak(G.answer,0.7);
@@ -824,6 +1088,7 @@ function roundYesno(){
 window.ansYesno=(el)=>{
   if(G.lock)return;G.lock=true;
   const right=el.dataset.a===G.answer;
+  recQuiz('yesno',right);
   if(right){el.classList.add('right');ding();addStar();G.got++;
     $('gfb').className='fb good';$('gfb').textContent='🗣️ '+G.ansFull+' 你也大声说！';
   }else{
@@ -837,7 +1102,7 @@ window.ansYesno=(el)=>{
 
 function sortEngine(pools){
   const item=pick(pools.items);
-  G.answer=item.kind;G.item=item;
+  G.answer=item.kind;G.item=item;G.firstTry=true;
   $('gameStage').innerHTML=gameDots()+`
     <div class="gq"><span class="qemo">${item.e}</span>${item.w}</div>
     <div class="gsub">它应该放进哪个篮子？</div>
@@ -850,12 +1115,16 @@ function sortEngine(pools){
 window.ansSort=(el)=>{
   if(G.lock)return;
   if(el.dataset.k===G.answer){
+    if(G.firstTry){recordWord(G.item.w,true);recQuiz('sort',true);}
     G.lock=true;ding();addStar();G.got++;
     const s=G.item.sentence;
     $('gfb').className='fb good';$('gfb').textContent='✅ '+s;
     speak(s,0.78);
     G.i++;setTimeout(nextRound,1700);
-  }else{el.classList.add('shake');boop();setTimeout(()=>el.classList.remove('shake'),450);}
+  }else{
+    if(G.firstTry){recordWord(G.item.w,false);recQuiz('sort',false);G.firstTry=false;}
+    el.classList.add('shake');boop();setTimeout(()=>el.classList.remove('shake'),450);
+  }
 };
 function roundSort(){
   const an=ANIMALS.filter(a=>a.lv<=2&&!['fish','chicken'].includes(a.w))
@@ -879,7 +1148,7 @@ function tprEngine(list,verb){
   const target=pick(list);
   const opts=shuffle([target,...shuffle(list.filter(w=>w.w!==target.w)).slice(0,2)]);
   const instr=verb?`Touch your ${target.w}!`:target.w;
-  G.answer=target.w;G.instr=instr;
+  G.answer=target.w;G.instr=instr;G.firstTry=true;
   $('gameStage').innerHTML=gameDots()+`
     <div class="gq">${verb?'听指令！点出来，再摸摸自己的～':'听指令，点出正确的动作！'}</div>
     <div class="gsub">点 🔊 再听一遍</div>
@@ -892,11 +1161,14 @@ function tprEngine(list,verb){
 window.ansTpr=(el)=>{
   if(G.lock)return;
   if(el.dataset.w===G.answer){
+    if(G.firstTry){recordWord(G.answer,true);recQuiz('tpr',true);}
     G.lock=true;el.classList.add('right');ding();addStar();G.got++;
     $('gfb').className='fb good';$('gfb').textContent='👏 '+G.instr+' 做个动作吧！';
     speak(G.instr,0.8,true);
     G.i++;setTimeout(nextRound,1400);
-  }else{el.classList.add('wrong');el.classList.add('shake');boop();
+  }else{
+    if(G.firstTry){recordWord(G.answer,false);recQuiz('tpr',false);G.firstTry=false;}
+    el.classList.add('wrong');el.classList.add('shake');boop();
     setTimeout(()=>el.classList.remove('shake'),450);speak(G.instr,0.7);}
 };
 function roundTpr(){tprEngine(BODY,true);}
@@ -1030,7 +1302,14 @@ window.ansFactory=(saidYes,el)=>{
   speak(full,0.78);
   $('answerRow').innerHTML='';
 };
-function giveSentenceStar(){if(!F.starGiven){F.starGiven=true;addStar();}}
+function giveSentenceStar(){
+  if(!F.starGiven){
+    F.starGiven=true;
+    DB.factory.done++;if(F.tpl.three)DB.factory.three++;
+    F.slots.forEach(s=>{if(s.word)recordWord(s.word);});
+    addStar();
+  }
+}
 window.resetSentence=()=>{
   F.slots.forEach(s=>{s.word=null;s.e=null;s.hex=null;});
   F.starGiven=false;$('answerRow').innerHTML='';$('sFeedback').innerHTML='';
@@ -1042,18 +1321,217 @@ function switchPSec(k){
   document.querySelectorAll('.ptab2').forEach(b=>b.classList.toggle('active',b.dataset.ps===k));
   document.querySelectorAll('.psec').forEach(s=>s.classList.remove('active'));
   $('ps-'+k).classList.add('active');
+  if(k==='growth')renderGrowth();
 }
 window.switchPSec=switchPSec;
+
+/* ---- growth page ---- */
+function autoLevel(w){
+  const d=DB.words[w];if(!d)return 0;
+  const n=d.c+d.w;
+  if(d.c>=3&&d.c/Math.max(1,n)>=0.75)return 3;
+  if(n>=1)return d.c>=1?2:1;
+  if((d.t||0)>=1)return 1;
+  return 0;
+}
+function levelOf(w){return DB.ratings[w]||autoLevel(w);}
+function renderGrowth(){
+  const wk=weekStats(),streak=calcStreak();
+  const totalDays=Object.keys(DB.sessions).filter(k=>{const s=DB.sessions[k];return s.stars>0||s.acts>0;}).length;
+  const totalStars=Object.values(DB.sessions).reduce((a,s)=>a+(s.stars||0),0);
+  $('gStats').innerHTML=`
+    <div class="gstat"><b>🔥 ${streak}</b><span>连续天数</span></div>
+    <div class="gstat"><b>${wk.days}/7</b><span>本周打卡</span></div>
+    <div class="gstat"><b>${totalDays}</b><span>累计天数</span></div>
+    <div class="gstat"><b>⭐ ${totalStars}</b><span>累计星星</span></div>
+    <div class="gstat"><b>${DB.factory.done}</b><span>拼过的句子</span></div>`;
+  $('gStoreWarn').style.display=Store.ok?'none':'block';
+  $('gMap').innerHTML=PLANETS.map(p=>`
+    <h4 style="margin:12px 0 2px;font-size:14px">${p.icon} ${p.nm} <span style="color:#B8B8CC;font-weight:400;font-size:12px">${p.wk}</span></h4>
+    <div class="wchips">${p.words.map(w=>{
+      const lv=levelOf(w.w),rated=DB.ratings[w.w];
+      return `<button class="wchip m${lv}" onclick="cycleRate('${w.w.replace(/'/g,"\\'")}')">${w.w}${rated?`<span class="rt">L${rated}</span>`:''}</button>`;
+    }).join('')}</div>`).join('');
+  const trouble=Object.entries(DB.words).filter(([,d])=>d.w>=2).sort((a,b)=>b[1].w-a[1].w).slice(0,8);
+  const acc=(q)=>{const n=q.c+q.w;return n?Math.round(q.c/n*100)+'% ('+q.c+'/'+n+')':'—';};
+  $('gTrouble').innerHTML=`
+    ${trouble.length?`<div class="tchips">${trouble.map(([w,d])=>`<span class="tchip">${w} ×${d.w}错</span>`).join('')}</div>`:'<p style="font-size:13px;color:#8A8AA3">暂无高频错词，继续保持！</p>'}
+    <p style="font-size:13.5px">听音找词正确率 <b>${acc(DB.quiz.listen)}</b> · can/can't 判断 <b>${acc(DB.quiz.yesno)}</b> · 分类 <b>${acc(DB.quiz.sort)}</b> · 听指令 <b>${acc(DB.quiz.tpr)}</b></p>`;
+  $('gNotes').innerHTML=DB.notes.slice(-6).reverse().map(n=>`<li><b>${n.d}</b>：${n.txt}</li>`).join('');
+  renderTalks();
+}
+window.cycleRate=(w)=>{
+  const cur=DB.ratings[w]||0;
+  const next=cur>=4?0:cur+1;
+  if(next===0)delete DB.ratings[w];else DB.ratings[w]=next;
+  Store.save();renderGrowth();
+};
+window.saveNote=(btn)=>{
+  const t=$('gNoteIn').value.trim();if(!t)return;
+  DB.notes.push({d:todayKey(),txt:t});
+  if(DB.notes.length>500)DB.notes=DB.notes.slice(-500);
+  Store.save();$('gNoteIn').value='';renderGrowth();
+  btn.textContent='✅ 已保存';setTimeout(()=>btn.textContent='保存这条记录',1600);
+};
+function buildReport(){
+  const wk=weekStats(),streak=calcStreak();
+  const acc=(q)=>{const n=q.c+q.w;return n?Math.round(q.c/n*100)+'%（'+q.c+'/'+n+'）':'尚无数据';};
+  const trouble=Object.entries(DB.words).filter(([,d])=>d.w>=2).sort((a,b)=>b[1].w-a[1].w).slice(0,10)
+    .map(([w,d])=>`${w}(错${d.w}/对${d.c})`).join('、')||'无';
+  const byLv={1:[],2:[],3:[],4:[]};
+  Object.entries(DB.ratings).forEach(([w,r])=>{if(byLv[r])byLv[r].push(w);});
+  const auto3=Object.keys(DB.words).filter(w=>!DB.ratings[w]&&autoLevel(w)>=3);
+  const recentNotes=DB.notes.slice(-8).map(n=>`${n.d} ${n.txt}`).join('\n')||'无';
+  const wkTalks=DB.talks.filter(t=>{const dt=new Date(t.d);return !isNaN(dt)&&(Date.now()-dt.getTime())/864e5<7;});
+  const lastT=DB.talks[DB.talks.length-1];
+  const talkFixes=wkTalks.flatMap(t=>t.fixes.map(f=>`${f.bad}→${f.good}`)).slice(-6).join('、')||'无';
+  const talkLine=DB.talks.length
+    ?`本周对话 ${wkTalks.length} 次（累计 ${DB.talks.length} 次）；最近总分 ${lastT.sc.t??'—'}/10（听懂${lastT.sc.l??'—'} 完整句${lastT.sc.s??'—'} 词汇${lastT.sc.v??'—'} 自信${lastT.sc.c??'—'}）；本周评分序列：${wkTalks.map(t=>t.sc.t??'—').join('→')||'无'}；本周纠错：${talkFixes}；累计金句 ${DB.talks.filter(t=>t.gold).length} 句，最新金句「${(DB.talks.filter(t=>t.gold).slice(-1)[0]||{}).gold||'无'}」`
+    :'本周暂无（复盘未粘贴或未进行）';
+  return `【Morton 学习周报 · ${todayKey()}】
+打卡：本周 ${wk.days}/7 天 · 连续 ${streak} 天 · 本周⭐${wk.stars}
+游戏正确率（累计）：听音找词 ${acc(DB.quiz.listen)} · can/can't判断 ${acc(DB.quiz.yesno)} · 动物食物分类 ${acc(DB.quiz.sort)} · 听指令做动作 ${acc(DB.quiz.tpr)}
+句子工厂：累计拼句 ${DB.factory.done} 句，三句连说 ${DB.factory.three} 次
+GPT口语对话：${talkLine}
+高频错词：${trouble}
+家长评定等级：L4独立使用：${byLv[4].join('、')||'无'}｜L3提示下能说：${byLv[3].join('、')||'无'}｜L2能识别：${byLv[2].join('、')||'无'}｜L1能跟读：${byLv[1].join('、')||'无'}
+自动统计达到熟练的词：${auto3.join('、')||'无'}
+家长观察记录：
+${recentNotes}
+（请 Claude 根据以上数据评估本周掌握情况，判断下周推进/放缓/换形式，并给出具体调整）`;
+}
+window.copyReport=(btn)=>{
+  const txt=buildReport();
+  const done=()=>{btn.textContent='✅ 已复制，去粘贴给 Claude';setTimeout(()=>btn.textContent='📋 复制学习周报',2500);};
+  if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(txt).then(done).catch(()=>fallbackCopy(txt,done));}
+  else fallbackCopy(txt,done);
+};
+window.downloadBackup=()=>{
+  try{
+    const blob=new Blob([JSON.stringify(DB,null,1)],{type:'application/json'});
+    const a=document.createElement('a');
+    a.href=URL.createObjectURL(blob);
+    a.download='Morton学习记录备份-'+todayKey()+'.json';
+    document.body.appendChild(a);a.click();
+    setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove();},800);
+  }catch(e){$('gImportMsg').textContent='当前环境不支持下载，请在浏览器中打开使用';}
+};
+window.importBackup=(inp)=>{
+  const f=inp.files&&inp.files[0];if(!f)return;
+  const r=new FileReader();
+  r.onload=()=>{
+    try{
+      DB=normalizeDB(JSON.parse(r.result));
+      Store.save();
+      stars=sess().stars;$('starCount').textContent=stars;
+      renderGrowth();renderStreak();
+      $('gImportMsg').textContent='✅ 备份已恢复（'+Object.keys(DB.sessions).length+' 天记录）';
+    }catch(e){$('gImportMsg').textContent='⚠️ 文件格式不对，请选择之前下载的备份 JSON 文件';}
+    inp.value='';
+  };
+  r.readAsText(f);
+};
+function renderStreak(){
+  const s=calcStreak();
+  $('streakBadge').innerHTML=s>=2?`<span class="streak-badge">🔥 连续探险 ${s} 天！</span>`:(s===1?`<span class="streak-badge">⭐ 今天也来探险啦！</span>`:'');
+}
+
+/* ---- GPT Live speaking record ---- */
+function parseTalk(txt){
+  if(!/Morton\s*口语复盘/.test(txt))return null;
+  const line=k=>{const m=txt.match(new RegExp('^\\s*'+k+'\\s*[:：]\\s*(.+)$','m'));return m?m[1].trim():'';};
+  const splitL=s=>s?s.split(/[|｜;；]/).map(x=>x.trim()).filter(x=>x&&x!=='无'):[];
+  const scLine=line('评分');
+  const g=k=>{const m=scLine.match(new RegExp(k+'\\s*[:：]?\\s*(\\d+(?:\\.\\d+)?)'));return m?+m[1]:null;};
+  const fixes=splitL(line('纠错')).map(f=>{
+    const p=f.split(/→|->/);
+    return p.length>=2?{bad:p[0].trim(),good:p.slice(1).join('→').trim()}:null;
+  }).filter(Boolean);
+  const dm=line('日期').match(/\d{4}-\d{1,2}-\d{1,2}/);
+  const gold=line('金句');
+  return {
+    d:dm?dm[0]:todayKey(), topic:line('主题'), mins:line('时长'),
+    indep:splitL(line('独立说出')), prompted:splitL(line('提示后能说')),
+    fixes, gold:gold==='无'?'':gold, next:line('明日建议'),
+    sc:{l:g('听懂'),s:g('完整句'),v:g('词汇'),c:g('自信'),t:g('总分')},
+    note:line('备注')==='无'?'':line('备注')
+  };
+}
+window.saveTalk=(btn)=>{
+  const t=$('talkIn').value.trim();
+  if(!t){$('talkMsg').textContent='先把 GPT 输出的复盘粘贴进来哦';return;}
+  const rec=parseTalk(t);
+  if(!rec){$('talkMsg').textContent='⚠️ 没识别出「Morton口语复盘」格式，请确认整段复制';return;}
+  DB.talks.push(rec);if(DB.talks.length>1000)DB.talks=DB.talks.slice(-1000);
+  Store.save();$('talkIn').value='';
+  $('talkMsg').textContent='✅ 已保存！'+(rec.gold?'金句已挂上金句墙 🏆':'');
+  renderTalks();renderGoldCard();
+  if(btn){btn.textContent='✅ 已保存';setTimeout(()=>{btn.textContent='解析并保存';$('talkMsg').textContent='';},2600);}
+};
+function talkChartSVG(){
+  const pts=DB.talks.filter(t=>t.sc&&t.sc.t!=null).slice(-20);
+  if(pts.length<2)return '';
+  const W=340,H=120,P=24;
+  const x=i=>P+ i*(W-P-10)/(pts.length-1);
+  const y=v=>H-16-(v/10)*(H-34);
+  const poly=pts.map((p,i)=>`${x(i).toFixed(1)},${y(p.sc.t).toFixed(1)}`).join(' ');
+  const grid=[0,5,10].map(v=>`<line x1="${P}" y1="${y(v)}" x2="${W-8}" y2="${y(v)}" stroke="#F0E9DC" stroke-width="1"/><text x="${P-5}" y="${y(v)+3.5}" font-size="9" fill="#B8B8CC" text-anchor="end">${v}</text>`).join('');
+  const dots=pts.map((p,i)=>`<circle cx="${x(i).toFixed(1)}" cy="${y(p.sc.t).toFixed(1)}" r="4.5" fill="#FF7043" stroke="#FFFDF8" stroke-width="2" style="cursor:pointer" onclick="talkPoint(${DB.talks.indexOf(p)})"/>`).join('');
+  const last=pts[pts.length-1];
+  const lastLbl=`<text x="${x(pts.length-1).toFixed(1)}" y="${(y(last.sc.t)-9).toFixed(1)}" font-size="11" font-weight="700" fill="#3A3A55" text-anchor="middle">${last.sc.t}</text>`;
+  const d0=pts[0].d.slice(5),d1=last.d.slice(5);
+  const xlbl=`<text x="${P}" y="${H-3}" font-size="9" fill="#B8B8CC">${d0}</text><text x="${W-8}" y="${H-3}" font-size="9" fill="#B8B8CC" text-anchor="end">${d1}</text>`;
+  return `<svg viewBox="0 0 ${W} ${H}" style="width:100%;max-width:520px;display:block" role="img" aria-label="口语总分趋势">
+    ${grid}<polyline points="${poly}" fill="none" stroke="#FF7043" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>${dots}${lastLbl}${xlbl}</svg>`;
+}
+window.talkPoint=(i)=>{
+  const p=DB.talks[i];if(!p)return;
+  $('talkCap').textContent=`${p.d} · ${p.topic||'—'} · 总分 ${p.sc.t}/10（听懂${p.sc.l??'—'} 完整句${p.sc.s??'—'} 词汇${p.sc.v??'—'} 自信${p.sc.c??'—'}）`;
+};
+function renderTalks(){
+  const el=$('talkStats');if(!el)return;
+  if(!DB.talks.length){el.innerHTML='<p style="font-size:13px;color:#8A8AA3">还没有对话记录。做一次 GPT Live 练习，把复盘粘贴进来就有曲线啦。</p>';return;}
+  const n=DB.talks.length;
+  const wkN=DB.talks.filter(t=>{const dt=new Date(t.d);return !isNaN(dt)&&(Date.now()-dt.getTime())/864e5<7;}).length;
+  const last=DB.talks[DB.talks.length-1];
+  const chart=talkChartSVG();
+  const fixes=DB.talks.flatMap(t=>t.fixes.map(f=>({...f,d:t.d}))).slice(-6).reverse();
+  const recent=DB.talks.slice(-3).reverse();
+  el.innerHTML=`
+    <div class="tsub"><span>累计对话 <b>${n}</b> 次</span><span>本周 <b>${wkN}</b> 次</span><span>最近总分 <b>${last.sc.t??'—'}/10</b></span></div>
+    ${chart?`<div class="chartbox"><div style="font-size:12px;font-weight:700;color:#5A5A75;margin-bottom:4px">口语总分趋势（点圆点看详情）</div>${chart}<div class="chart-cap" id="talkCap">最近：${last.d} · ${last.topic||'—'} · ${last.sc.t??'—'}/10</div></div>`:''}
+    ${fixes.length?`<div style="font-size:13px;font-weight:700;margin:8px 0 4px">最近的纠错本</div><div class="fixrow">${fixes.map(f=>`<div class="fixitem"><span class="bad">${f.bad}</span><span class="good">${f.good}</span></div>`).join('')}</div>`:''}
+    <ul class="talk-list">${recent.map(t=>`<li><b>${t.d}</b> ${t.topic||''} · 独立句 ${t.indep.length} 个${t.gold?` · 金句「${t.gold}」`:''}${t.next?`<br>↳ 明日建议：${t.next}`:''}</li>`).join('')}</ul>`;
+}
+function renderGoldCard(){
+  const golds=DB.talks.filter(t=>t.gold);
+  const card=$('goldCard');if(!card)return;
+  card.style.display=golds.length?'flex':'none';
+  $('goldCount').textContent=golds.length?`(${golds.length}句)`:'';
+}
+window.openGold=()=>{
+  const golds=DB.talks.filter(t=>t.gold).reverse();
+  $('goldList').innerHTML=golds.map(t=>`
+    <button class="gold-item" onclick="speak('${t.gold.replace(/'/g,"\\'")}',0.75);this.classList.remove('pop');void this.offsetWidth;this.classList.add('pop')">
+      🗣️ ${t.gold}<small>${t.d}${t.topic?' · '+t.topic:''}</small></button>`).join('');
+  $('barTitle').textContent='🏆 我的金句墙';
+  showScreen('scr-gold');
+};
 function renderGPT(){
-  $('gptBoxes').innerHTML=GPT_PROMPTS.map((p,i)=>`
+  const box=(p,i)=>`
     <h3>${p.wk}</h3>
     <div class="prompt-box">
       <button class="copy-btn" onclick="copyPrompt(${i},this)">📋 复制</button>
       <pre id="gp${i}">${p.txt}</pre>
-    </div>`).join('');
+    </div>`;
+  $('gptBoxes').innerHTML=
+    GPT_PROMPTS.map((p,i)=>box(p,i)).join('')+
+    `<h3 style="margin-top:26px">🎭 场景剧场（每周第2次对话用）</h3>
+     <p style="font-size:13.5px">主题指令练「会说句型」，场景剧场练「用英语办成一件事」。每周第1次对话用上面的主题指令，第2次用下面对应的场景，周六复习日把场景<b>再演一遍</b>并加一点小变化——同一场景重复2-3遍不是浪费，是孩子建立自信的关键。</p>`+
+    SCENE_PROMPTS.map((p,i)=>box(p,GPT_PROMPTS.length+i)).join('');
 }
 window.copyPrompt=(i,btn)=>{
-  const txt=GPT_PROMPTS[i].txt;
+  const txt=PROMPT_ALL[i].txt;
   const done=()=>{btn.textContent='✅ 已复制';setTimeout(()=>btn.textContent='📋 复制',2000);};
   if(navigator.clipboard&&navigator.clipboard.writeText){
     navigator.clipboard.writeText(txt).then(done).catch(()=>fallbackCopy(txt,done));
@@ -1068,7 +1546,9 @@ function fallbackCopy(txt,done){
 }
 
 /* ---- boot ---- */
-renderHome();renderGPT();
+stars=sess().stars;
+renderHome();renderGPT();renderGrowth();renderStreak();renderGoldCard();
+$('starCount').textContent=stars;
 window.openPlanet=openPlanet;window.goBack=goBack;window.switchPTab=switchPTab;window.speak=speak;
 </script>
 </body>
